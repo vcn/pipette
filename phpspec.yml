@@ -1,0 +1,16 @@
+suites:
+  default:
+    spec_prefix: tests
+    psr4_prefix: Vcn\Pipette
+    namespace: Vcn\Pipette
+
+extensions:
+  LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
+    format:
+      - html
+      - clover
+    output:
+      html: reports/coverage
+      clover: reports/phpspec.coverage.xml
+
+formatter.name: pretty

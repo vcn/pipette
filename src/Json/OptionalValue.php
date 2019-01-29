@@ -56,6 +56,26 @@ class OptionalValue
     }
 
     /**
+     * Assert this value is an array, if no value exists in the array at the given index or the value is null, have any
+     * chain of operations result in null, otherwise return the value at given index.
+     *
+     * @param int $n
+     *
+     * @return OptionalValue
+     * @throws Exception\AssertionFailed If this value is not an object nor null.
+     */
+    public function ¿nth(int $n): OptionalValue
+    {
+        if ($this->isNull()) {
+            $newPointer = sprintf("%s[%d]", $this->pointer, $n);
+
+            return new self(null, $newPointer);
+        }
+
+        return $this->value->¿nth($n);
+    }
+
+    /**
      * Is this value an object?
      *
      * @return bool

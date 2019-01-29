@@ -77,6 +77,45 @@ class Value
     }
 
     /**
+     * Assert this value is an array, assert a value exists in the array at the given index, then return the value at that index.
+     *
+     * @param int $n
+     *
+     * @return Value
+     * @throws Exception\AssertionFailed If this value is not an array, or if $n is not a valid index in this array.
+     */
+    public function nth(int $n)
+    {
+        if (!$this->hasNth($n)) {
+            throw new Exception\AssertionFailed(
+                sprintf(
+                    "Expected %s[%d] to be present, none given.",
+                    $this->pointer,
+                    $n
+                )
+            );
+        }
+
+        return new Value($this->value[$n], sprintf("%s[%d]", $this->pointer, $n));
+    }
+
+    /**
+     * Assert this value is an array, if no value exists in the array at the given index or the value is null, have any
+     * chain of operations result in null, otherwise return the value at given index.
+     *
+     * @param int $n
+     *
+     * @return OptionalValue
+     * @throws Exception\AssertionFailed If this value is not an object nor null.
+     */
+    public function ¿nth(int $n): OptionalValue
+    {
+        return !$this->hasNth($n)
+            ? new OptionalValue(null, sprintf("%s[%d]", $this->pointer, $n))
+            : new OptionalValue($this->nth($n), sprintf("%s[%d]", $this->pointer, $n));
+    }
+
+    /**
      * Is this value an object?
      *
      * @return bool
@@ -107,6 +146,29 @@ class Value
         }
 
         return property_exists($this->value, $name);
+    }
+
+    /**
+     * Assert this value is an array, then return whether the value at the given index exists.
+     *
+     * @param int $n
+     *
+     * @return bool
+     * @throws Exception\AssertionFailed If this value is not an object.
+     */
+    public function hasNth(int $n): bool
+    {
+        if (!$this->isArray()) {
+            throw new Exception\AssertionFailed(
+                sprintf(
+                    "Expected %s to be an array, %s given.",
+                    $this->pointer,
+                    Json::prettyPrintType($this->value)
+                )
+            );
+        }
+
+        return array_key_exists($n, $this->value);
     }
 
     /**

@@ -122,6 +122,20 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
+    public function it_should_provide_a_value_accessing_an_existent_array_item()
+    {
+        $json = json_decode('["a"]');
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿nth(0)->¿string()->shouldBe('a');
+        $this->¿nth(0)->getPointer()->shouldBe('$[0]');
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
     public function it_should_push_the_pointer_forward_when_chaining_fields()
     {
         $json = json_decode('{"a": 1}');

@@ -68,6 +68,59 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
+    public function it_should_provide_a_value_accessing_an_existent_array_item()
+    {
+        $json = json_decode('["a"]');
+
+        $this->beConstructedWith($json, '$');
+
+        $this->nth(0)->string()->shouldBe('a');
+        $this->nth(0)->getPointer()->shouldBe('$[0]');
+
+        $this->¿nth(0)->¿string()->shouldBe('a');
+        $this->¿nth(0)->getPointer()->shouldBe('$[0]');
+    }
+
+    /**
+     * @test
+     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
+     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
+     * @throws \ReflectionException
+     */
+    public function it_should_fail_accessing_an_array_item_on_a_non_array()
+    {
+        $json = json_decode('true');
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed("Expected $ to be an array, true given.");
+
+        $this->shouldThrow($e)->during('nth', [0]);
+        $this->shouldThrow($e)->during('¿nth', [0]);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_fail_accessing_a_non_existent_array_item()
+    {
+        $json = json_decode('["a", 1, true]');
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed("Expected $[3] to be present, none given.");
+
+        $this->shouldThrow($e)->during('nth', [3]);
+
+        $this->¿nth(3)->¿int()->shouldBe(null);
+        $this->¿nth(3)->getPointer()->shouldBe('$[3]');
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
     public function it_should_coerce_void_to_null()
     {
         $json = json_decode('{"a": 1}');

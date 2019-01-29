@@ -122,14 +122,28 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
+    public function it_should_provide_a_value_accessing_an_existent_array_item()
+    {
+        $json = json_decode('["a"]');
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿nth(0)->¿string()->shouldBe('a');
+        $this->¿nth(0)->getPointer()->shouldBe('$[0]');
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
     public function it_should_push_the_pointer_forward_when_chaining_fields()
     {
         $json = json_decode('{"a": 1}');
 
         $this->beConstructedWith(new Value($json, '$'), '$');
 
-        $this->¿field('b')->¿field('c')->¿int()->shouldBe(null);
-        $this->¿field('b')->¿field('c')->getPointer()->shouldBe("$.b.c");
+        $this->¿field('b')->¿nth(2)->¿int()->shouldBe(null);
+        $this->¿field('b')->¿nth(2)->getPointer()->shouldBe("$.b[2]");
     }
 
     /**
@@ -140,8 +154,8 @@ class OptionalValueSpec extends ObjectBehavior
     {
         $this->beConstructedWith(null, '$');
 
-        $this->¿field('b')->¿field('c')->¿int()->shouldBe(null);
-        $this->¿field('b')->¿field('c')->getPointer()->shouldBe("$.b.c");
+        $this->¿field('b')->¿nth(2)->¿int()->shouldBe(null);
+        $this->¿field('b')->¿nth(2)->getPointer()->shouldBe("$.b[2]");
     }
 
 

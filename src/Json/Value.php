@@ -84,7 +84,7 @@ class Value
      * @return Value
      * @throws Exception\AssertionFailed If this value is not an array, or if $n is not a valid index in this array.
      */
-    public function nth(int $n)
+    public function nth(int $n): OptionalValue
     {
         if (!$this->hasNth($n)) {
             throw new Exception\AssertionFailed(

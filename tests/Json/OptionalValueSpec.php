@@ -142,8 +142,8 @@ class OptionalValueSpec extends ObjectBehavior
 
         $this->beConstructedWith(new Value($json, '$'), '$');
 
-        $this->¿field('b')->¿field('c')->¿int()->shouldBe(null);
-        $this->¿field('b')->¿field('c')->getPointer()->shouldBe("$.b.c");
+        $this->¿field('b')->¿nth(3)->¿int()->shouldBe(null);
+        $this->¿field('b')->¿nth(2)->getPointer()->shouldBe("$.b[2]");
     }
 
     /**
@@ -154,8 +154,8 @@ class OptionalValueSpec extends ObjectBehavior
     {
         $this->beConstructedWith(null, '$');
 
-        $this->¿field('b')->¿field('c')->¿int()->shouldBe(null);
-        $this->¿field('b')->¿field('c')->getPointer()->shouldBe("$.b.c");
+        $this->¿field('b')->¿nth(3)->¿int()->shouldBe(null);
+        $this->¿field('b')->¿nth(2)->getPointer()->shouldBe("$.b[2]");
     }
 
 

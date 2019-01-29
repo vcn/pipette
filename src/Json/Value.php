@@ -67,7 +67,7 @@ class Value
      * @param string $name
      *
      * @return OptionalValue
-     * @throws Exception\AssertionFailed If this value is not an array nor null.
+     * @throws Exception\AssertionFailed If this value is not an object nor null.
      */
     public function ¿field(string $name): OptionalValue
     {
@@ -106,7 +106,7 @@ class Value
      * @param int $n
      *
      * @return OptionalValue
-     * @throws Exception\AssertionFailed If this value is not an object nor null.
+     * @throws Exception\AssertionFailed If this value is not an array nor null.
      */
     public function ¿nth(int $n): OptionalValue
     {

@@ -557,6 +557,19 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_date_with_no_time_component()
+    {
+        $json   = "2018-01-01";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->date()->format('Y-m-d\TH:i:s')->shouldBe('2018-01-01T00:00:00');
+    }
+
+    /**
+     * @test
      */
     public function it_should_failed_accessing_a_date_if_accessing_a_non_date()
     {

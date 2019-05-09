@@ -261,7 +261,7 @@ class OptionalValue
      * @throws Exception\AssertionFailed If this value is not a string, nor null, or does not conform to the given
      *                                   format.
      */
-    public function ¿date(string $format = 'Y-m-d'): ?DateTimeImmutable
+    public function ¿date(string $format = 'Y-m-d|'): ?DateTimeImmutable
     {
         return $this->¿dateTime($format);
     }

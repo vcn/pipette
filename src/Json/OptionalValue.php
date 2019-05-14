@@ -291,7 +291,7 @@ class OptionalValue
      *
      * @param string $className
      *
-     * @return null|Enum
+     * @return null|mixed|Enum
      * @throws Exception\AssertionFailed If this value is not a string, nor null, or it is not any of the Enum names
      *                                   from $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.

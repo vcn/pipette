@@ -422,7 +422,6 @@ class OptionalValue
         return $this->value === null;
     }
 
-    /** @noinspection PhpDocRedundantThrowsInspection */
     /**
      * Apply a function to this value if it is not null, otherwise return null.
      *
@@ -437,7 +436,11 @@ class OptionalValue
      */
     public function ¿apply(callable $f)
     {
-        return $this->isNull() ? null : $f($this->value);
+        try {
+            return $this->isNull() ? null : $f($this->value);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
     /**

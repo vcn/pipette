@@ -883,7 +883,6 @@ class Value
         return $this->value === null;
     }
 
-    /** @noinspection PhpDocRedundantThrowsInspection */
     /**
      * Apply a function to this value.
      *
@@ -898,10 +897,13 @@ class Value
      */
     public function apply(callable $f)
     {
-        return $f($this);
+        try {
+            return $f($this);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
-    /** @noinspection PhpDocRedundantThrowsInspection */
     /**
      * Apply a function to this value if it is not null, otherwise return null.
      *
@@ -916,7 +918,11 @@ class Value
      */
     public function ¿apply(callable $f)
     {
-        return $this->isNull() ? null : $f($this);
+        try {
+            return $this->isNull() ? null : $f($this);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
     /**

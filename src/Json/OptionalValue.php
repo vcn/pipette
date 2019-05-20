@@ -422,6 +422,7 @@ class OptionalValue
         return $this->value === null;
     }
 
+    /** @noinspection PhpDocRedundantThrowsInspection */
     /**
      * Apply a function to this value if it is not null, otherwise return null.
      *
@@ -432,6 +433,7 @@ class OptionalValue
      * @param callable $f Value -> a
      *
      * @return null|mixed a or null
+     * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function ¿apply(callable $f)
     {

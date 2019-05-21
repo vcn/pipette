@@ -893,10 +893,15 @@ class Value
      * @param callable $f Value -> a
      *
      * @return mixed a
+     * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function apply(callable $f)
     {
-        return $f($this);
+        try {
+            return $f($this);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -909,10 +914,15 @@ class Value
      * @param callable $f Value -> a
      *
      * @return null|mixed a or null
+     * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function ¿apply(callable $f)
     {
-        return $this->isNull() ? null : $f($this);
+        try {
+            return $this->isNull() ? null : $f($this);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
     /**

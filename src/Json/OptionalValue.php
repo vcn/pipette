@@ -432,10 +432,15 @@ class OptionalValue
      * @param callable $f Value -> a
      *
      * @return null|mixed a or null
+     * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function ¿apply(callable $f)
     {
-        return $this->isNull() ? null : $f($this->value);
+        try {
+            return $this->isNull() ? null : $f($this->value);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
+            throw $e;
+        }
     }
 
     /**

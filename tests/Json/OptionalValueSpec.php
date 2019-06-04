@@ -6,7 +6,9 @@ use DateTimeImmutable;
 use PhpSpec\ObjectBehavior;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
 use Vcn\Pipette\Json\Exception;
+use Vcn\Pipette\Json\OptionalValue;
 use Vcn\Pipette\Json\Value;
+use Webmozart\Assert\Assert;
 
 class OptionalValueSpec extends ObjectBehavior
 {
@@ -622,5 +624,23 @@ class OptionalValueSpec extends ObjectBehavior
         $this->¿encode()->shouldBe(null);
         $this->prettyPrint()->shouldBe($pretty);
         $this->¿prettyPrint()->shouldBe(null);
+    }
+
+    public function it_should_json_serialize()
+    {
+        $json = (object)[
+            "1" => "a",
+            "2" => "b",
+            "3" => "c",
+        ];
+
+        Assert::same(json_encode(new OptionalValue(new Value($json, '$'), '$')), '{"1":"a","2":"b","3":"c"}');
+    }
+
+    public function it_should_json_serialize_a_null_value()
+    {
+        $json = null;
+
+        Assert::same(json_encode(new OptionalValue(null, '$')), 'null');
     }
 }

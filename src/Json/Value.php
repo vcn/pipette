@@ -4,12 +4,13 @@ namespace Vcn\Pipette\Json;
 
 use DateTime;
 use DateTimeImmutable;
+use JsonSerializable;
 use stdClass;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
 use Vcn\Pipette\Json\Exception;
 
-class Value
+class Value implements JsonSerializable
 {
     /**
      * A JSON value anywhere in some JSON structure.
@@ -899,8 +900,10 @@ class Value
     {
         try {
             return $f($this);
+            // @codeCoverageIgnoreStart
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -920,8 +923,10 @@ class Value
     {
         try {
             return $this->isNull() ? null : $f($this);
+            // @codeCoverageIgnoreStart
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -1059,5 +1064,13 @@ class Value
     public function getPointer(): string
     {
         return $this->pointer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }

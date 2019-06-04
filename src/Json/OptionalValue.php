@@ -4,12 +4,13 @@ namespace Vcn\Pipette\Json;
 
 use DateTime;
 use DateTimeImmutable;
+use JsonSerializable;
 use Vcn\Lib\Enum;
 
 /**
  * A JSON value that is either not present or null.
  */
-class OptionalValue
+class OptionalValue implements JsonSerializable
 {
     /**
      * Absent, null or a non-null value
@@ -438,8 +439,10 @@ class OptionalValue
     {
         try {
             return $this->isNull() ? null : $f($this->value);
+            // @codeCoverageIgnoreStart
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
             throw $e;
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -536,5 +539,13 @@ class OptionalValue
     public function getPointer(): string
     {
         return $this->pointer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }

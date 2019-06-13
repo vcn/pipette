@@ -8,6 +8,7 @@ use tests\res\Vcn\Pipette\EmptyEnum;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
 use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Value;
+use Webmozart\Assert\Assert;
 
 class ValueSpec extends ObjectBehavior
 {
@@ -561,7 +562,7 @@ class ValueSpec extends ObjectBehavior
      */
     public function it_should_provide_a_date_with_no_time_component()
     {
-        $json   = "2018-01-01";
+        $json = "2018-01-01";
 
         $this->beConstructedWith($json, '$');
 
@@ -1171,5 +1172,16 @@ class ValueSpec extends ObjectBehavior
         $this->shouldThrow(Exception\Runtime::class)->during('encode', []);
 
         fclose($json);
+    }
+
+    public function it_should_json_serialize()
+    {
+        $json = (object)[
+            "1" => "a",
+            "2" => "b",
+            "3" => "c",
+        ];
+
+        Assert::same(json_encode(new Value($json, '$')), '{"1":"a","2":"b","3":"c"}');
     }
 }

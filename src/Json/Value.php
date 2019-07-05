@@ -6,6 +6,8 @@ use DateTime;
 use DateTimeImmutable;
 use JsonSerializable;
 use stdClass;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
 use Vcn\Pipette\Json\Exception;
@@ -27,15 +29,22 @@ class Value implements JsonSerializable
     private $pointer;
 
     /**
-     * @param mixed  $value
-     * @param string $pointer
+     * @var null|ValidatorInterface
+     */
+    private $validator;
+
+    /**
+     * @param mixed                   $value
+     * @param string                  $pointer
+     * @param null|ValidatorInterface $validator
      *
      * @internal
      */
-    public function __construct($value, string $pointer)
+    public function __construct($value, string $pointer, ?ValidatorInterface $validator = null)
     {
-        $this->value   = $value;
-        $this->pointer = $pointer;
+        $this->value     = $value;
+        $this->pointer   = $pointer;
+        $this->validator = $validator;
     }
 
     /**
@@ -46,7 +55,7 @@ class Value implements JsonSerializable
      * @return Value
      * @throws Exception\AssertionFailed If this value is not an object, or if $name is not a present field.
      */
-    public function field(string $name)
+    public function field(string $name): Value
     {
         if (!$this->hasField($name)) {
             throw new Exception\AssertionFailed(
@@ -78,7 +87,8 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is an array, assert a value exists in the array at the given index, then return the value at that index.
+     * Assert this value is an array, assert a value exists in the array at the given index, then return the value at
+     * that index.
      *
      * @param int $n
      *
@@ -242,7 +252,8 @@ class Value implements JsonSerializable
         $buffer = [];
 
         foreach ($this->value as $key => $value) {
-            $buffer[] = $f($key, new self($value, sprintf("%s[%d]", $this->pointer, $key)));
+            $value    = $f($key, new self($value, sprintf("%s[%d]", $this->pointer, $key)));
+            $buffer[] = $this->validate($value);
         }
 
         return $buffer;
@@ -265,7 +276,7 @@ class Value implements JsonSerializable
     public function ¿arrayMapWithIndex(callable $f): ?array
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->arrayMapWithIndex($f);
@@ -354,7 +365,8 @@ class Value implements JsonSerializable
         $buffer = [];
 
         foreach ($this->value as $key => $value) {
-            $buffer[$key] = $f($key, new self($value, sprintf("%s.%s", $this->pointer, $key)));
+            $value        = $f($key, new self($value, sprintf("%s.%s", $this->pointer, $key)));
+            $buffer[$key] = $this->validate($value);
         }
 
         return $buffer;
@@ -377,7 +389,7 @@ class Value implements JsonSerializable
     public function ¿objectMapWithIndex(callable $f): ?array
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->objectMapWithIndex($f);
@@ -414,7 +426,7 @@ class Value implements JsonSerializable
     public function ¿int(): ?int
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->int();
@@ -450,7 +462,7 @@ class Value implements JsonSerializable
     public function ¿float(): ?float
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->float();
@@ -496,7 +508,7 @@ class Value implements JsonSerializable
     public function ¿string(): ?string
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->string();
@@ -555,7 +567,7 @@ class Value implements JsonSerializable
         if ($result === false) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected %s to be a date time string according to format %s, '%s' given.",
+                    "Expected %s to be a date time string according to format %s, \"%s\" given.",
                     $this->pointer,
                     $format,
                     $string
@@ -579,7 +591,7 @@ class Value implements JsonSerializable
     public function ¿dateTime(string $format = DateTime::ATOM): ?DateTimeImmutable
     {
         if ($this->isNull()) {
-            return $this->value;
+            return null;
         }
 
         return $this->dateTime($format);
@@ -622,7 +634,7 @@ class Value implements JsonSerializable
         if ($className::getAllInstances() === []) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected field %s to by any of no enumeration constants, '%s' given.",
+                    "Expected field %s to by any of no enumeration constants, \"%s\" given.",
                     $this->pointer,
                     $string
                 )
@@ -636,7 +648,7 @@ class Value implements JsonSerializable
                 function (Enum $enum) use ($string) {
                     return new Exception\AssertionFailed(
                         sprintf(
-                            "Expected %s to be enumeration constant '%s', '%s' given.",
+                            "Expected %s to be enumeration constant %s, \"%s\" given.",
                             $this->getPointer(),
                             $enum->getName(),
                             $string
@@ -899,7 +911,8 @@ class Value implements JsonSerializable
     public function apply(callable $f)
     {
         try {
-            return $f($this);
+            return $this->validate($f($this));
+
             // @codeCoverageIgnoreStart
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
             throw $e;
@@ -922,7 +935,7 @@ class Value implements JsonSerializable
     public function ¿apply(callable $f)
     {
         try {
-            return $this->isNull() ? null : $f($this);
+            return $this->isNull() ? null : $this->apply($f);
             // @codeCoverageIgnoreStart
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
             throw $e;
@@ -951,7 +964,7 @@ class Value implements JsonSerializable
 
         foreach (array_merge([$f], [$g], $hs) as $v) {
             try {
-                return $v($this);
+                return $this->validate($v($this));
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (Exception\AssertionFailed $e) {
                 $failedAssertions[] = $e;
             }
@@ -1072,5 +1085,37 @@ class Value implements JsonSerializable
     public function jsonSerialize()
     {
         return $this->value;
+    }
+
+    /**
+     * @param mixed $value a
+     *
+     * @return mixed a
+     * @throws Exception\AssertionFailed
+     */
+    private function validate($value)
+    {
+        if ($this->validator !== null) {
+            $violations = $this->validator->validate($value);
+
+            foreach ($violations as $violation) {
+                /** @var ConstraintViolationInterface $violation */
+                $path        = $violation->getPropertyPath();
+                $expectation = $violation->getMessage();
+                $actual      = $violation->getInvalidValue();
+
+                throw new Exception\AssertionFailed(
+                    sprintf(
+                        "Expected %s.%s to be %s, %s given.",
+                        $this->pointer,
+                        $path,
+                        $expectation,
+                        Json::prettyPrintValue($actual)
+                    )
+                );
+            }
+        }
+
+        return $value;
     }
 }

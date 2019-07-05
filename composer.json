@@ -23,13 +23,17 @@
     },
 
     "suggest": {
-      "vcn/enum": "To extract Vcn\\Lib\\Enum values."
+      "vcn/enum": "To extract Vcn\\Lib\\Enum values.",
+      "symfony/validator": "To integrate the Symfony Validator Component."
     },
 
     "require-dev": {
+        "doctrine/annotations": "^1.6.1",
+        "doctrine/cache": "^1.8.0",
         "leanphp/phpspec-code-coverage": "^4.2",
         "phpspec/phpspec": "^4.3",
         "phpunit/phpunit": "^7.1",
+        "symfony/validator": "4.3.*",
 
         "vcn/enum": "^1.0"
     },

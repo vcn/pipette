@@ -3,6 +3,7 @@
 namespace Vcn\Pipette;
 
 use stdClass;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Value;
 
@@ -76,7 +77,7 @@ class Json
     public static function prettyPrintType($var): string
     {
         if (is_string($var)) {
-            return "string";
+            return 'string';
 
         } elseif ($var === null) {
             return 'null';
@@ -91,13 +92,55 @@ class Json
             return 'number';
 
         } elseif (is_array($var)) {
-            return "array";
+            return 'array';
 
         } elseif ($var instanceof stdClass) {
-            return "object";
+            return 'object';
 
         } else {
-            return "unknown type";
+            return 'unknown type';
         }
+    }
+
+    public static function prettyPrintValue($var): string
+    {
+        switch (self::prettyPrintType($var)) {
+            case 'string':
+                return sprintf('"%s"', mb_strlen($var) > 30 ? (mb_substr($var, 0, 30) . " ...") : $var);
+
+            case 'null':
+                return 'null';
+
+            case 'true':
+                return 'true';
+
+            case 'false':
+                return 'false';
+
+            case 'number':
+                return $var;
+
+            case 'array':
+                return 'array';
+
+            case 'object':
+                return 'object';
+
+            case 'unknown type':
+            default:
+                return 'unknown type';
+        }
+    }
+
+    /**
+     * todo
+     *
+     * @param ValidatorInterface $validator
+     *
+     * @return ValidatingJson
+     */
+    public static function validating(ValidatorInterface $validator): ValidatingJson
+    {
+        return new ValidatingJson($validator);
     }
 }

@@ -30,22 +30,22 @@ JSON;
 try {
     // This parser translates it to a string "(6 + (2 + 9))".
     $parseExpr = function (Json\Value $json) use (&$parseExpr) {
-        return $json->either(
-            function (Json\Value $value) use ($parseExpr) {
-                return sprintf(
-                    "(%s + %s)",
-                    $value->field('+')->field('a')->apply($parseExpr),
-                    $value->field('+')->field('b')->apply($parseExpr)
-                );
-            },
-            function (Json\Value $value) {
-                return (string)$value->field('val')->int();
-            }
-        );
+        $parseAdd = function (Json\Value $value) use ($parseExpr) {
+            return sprintf(
+                "(%s + %s)",
+                $value->field('+')->field('a')->apply($parseExpr),
+                $value->field('+')->field('b')->apply($parseExpr)
+            );
+        };
+
+        $parseVal = function (Json\Value $value) {
+            return (string)$value->field('val')->int();
+        };
+
+        return $json->either($parseAdd, $parseVal);
     };
 
-    $json = Json::parse($input);
-    $expr = $json->apply($parseExpr);
+    $expr = Json::parse($input)->apply($parseExpr);
 
     print_r($expr);
 } catch (Json\Exception\CantDecode | Json\Exception\AssertionFailed $e) {

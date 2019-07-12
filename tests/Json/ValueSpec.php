@@ -7,6 +7,7 @@ use PhpSpec\ObjectBehavior;
 use tests\res\Vcn\Pipette\EmptyEnum;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
 use Vcn\Pipette\Json\Exception;
+use Vcn\Pipette\Json\Validators\Validator;
 use Vcn\Pipette\Json\Value;
 use Webmozart\Assert\Assert;
 
@@ -31,9 +32,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_a_field_on_a_non_object()
     {
@@ -84,9 +82,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_an_array_item_on_a_non_array()
     {
@@ -151,9 +146,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_not_array_map_over_non_arrays()
     {
@@ -171,9 +163,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_rethrow_exceptions_when_array_mapping()
     {
@@ -259,9 +248,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_not_object_map_over_non_objects()
     {
@@ -280,9 +266,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_rethrow_exceptions_when_object_mapping()
     {
@@ -376,9 +359,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_an_int_on_a_non_number()
     {
@@ -445,9 +425,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_an_float_on_a_non_number()
     {
@@ -501,9 +478,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_a_string_on_a_non_string()
     {
@@ -788,9 +762,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_a_bool_on_a_non_bool()
     {
@@ -844,9 +815,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_true_on_false()
     {
@@ -900,9 +868,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_false_on_true()
     {
@@ -956,9 +921,6 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_null_on_non_null()
     {
@@ -973,9 +935,7 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
+     * @throws Exception\AssertionFailed
      */
     public function it_should_apply_functions()
     {
@@ -992,9 +952,7 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
+     * @throws Exception\AssertionFailed
      */
     public function it_should_apply_functions_to_a_non_null_optional_value()
     {
@@ -1011,9 +969,7 @@ class ValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
+     * @throws Exception\AssertionFailed
      */
     public function it_should_return_null_applying_to_a_null_optional_value()
     {
@@ -1174,6 +1130,9 @@ class ValueSpec extends ObjectBehavior
         fclose($json);
     }
 
+    /**
+     * @test
+     */
     public function it_should_json_serialize()
     {
         $json = (object)[
@@ -1183,5 +1142,42 @@ class ValueSpec extends ObjectBehavior
         ];
 
         Assert::same(json_encode(new Value($json, '$')), '{"1":"a","2":"b","3":"c"}');
+    }
+
+    /**
+     * @test
+     *
+     * @param Validator $validator
+     *
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_validate(Validator $validator)
+    {
+        $json = null;
+
+        $this->beConstructedWith($json, '$');
+
+        $validator->validate($this)->shouldBeCalled();
+
+        $this->validate($validator)->shouldBe($this);
+    }
+
+    /**
+     * @test
+     *
+     * @param Validator $validator
+     *
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_fail_to_validate(Validator $validator)
+    {
+        $json = null;
+        $e    = new Exception\AssertionFailed("Expected $ to be an object, null given.");
+
+        $this->beConstructedWith($json, '$');
+
+        $validator->validate($this)->willThrow($e)->shouldBeCalled();
+
+        $this->shouldThrow($e)->during('validate', [$validator]);
     }
 }

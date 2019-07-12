@@ -14,128 +14,29 @@ Easily extract what you need out of JSON.
 use Vcn\Pipette\Json;
 
 try {
-    $json = Json::parse($input);
-
     $parseInt = function (Json\Value $json) {
         return $json->int();
     };
 
-    $parseColor = function (Json\Value $value) use ($parseInt) {
-        $color    = $value->field('color')->string();
-        $category = $value->field('category')->string();
-        $type     = $value->¿field('type')->¿string();
-        $codeRgba = $value->field('code')->field('rgba')->arrayMap($parseInt);
-        $codeHex  = $value->field('code')->field('hex')->string();
+    $parseColor = function (Json\Value $json) use ($parseInt) {
+        $name     = $json->field('name')->string();
+        $category = $json->field('category')->string();
+        $type     = $json->¿field('type')->¿string();
+        $codeRgba = $json->field('code')->field('rgba')->arrayMap($parseInt);
+        $codeHex  = $json->field('code')->field('hex')->string();
 
-        return [
-            'name'     => $color,
-            'category' => $category,
-            'type'     => $type,
-            'codeRgba' => $codeRgba,
-            'codeHex'  => $codeHex,
-        ];
+        return [$name, $category, $type, $codeRgba, $codeHex];
     };
 
-    $colors = $json->field('colors')->arrayMap($parseColor);
+    $source = file_get_contents(__DIR__ . '/colors.json');
+
+    $colors = Json::parse($source)->field('colors')->arrayMap($parseColor);
 
     print_r(['colors' => $colors]);
 } catch (Json\Exception\CantDecode | Json\Exception\AssertionFailed $e) {
     print_r($e->getMessage());
 }
 ```
-
-## Motivation
-
-Suppose you have some JSON document that say, represents a user object:
-
-```json
-{
-  "id": 672,
-  "name": "Jane Doe"
-}
-```
-
-And you wanted to parse that object.
-One way to do that is by installing the `php-json` extension and call `json_decode`:
-
-```php
-<?php
-
-$input = <<<JSON
-{
-  "id": 672,
-  "name": "Jane Doe"
-}
-JSON;
-
-$json = json_decode($input);
-
-if ($json === null) {
-    $message = (string)json_last_error_msg();
-    $code    = (int)json_last_error();
-
-    throw new Exception($message, $code);
-}
-
-if (!$json instanceof stdClass) {
-    throw new Exception(sprintf("Expected $ to be an object, %s given.", gettype($json)));
-}
-
-if (!property_exists($json, 'id')) {
-    throw new Exception("Expected $.id to be present, none given.");
-}
-
-if (!is_int($json->id) || !is_float($json->id)) {
-    throw new Exception(sprintf("Expected $.id to be a number, %s given.", gettype($json->id)));
-}
-
-if (!property_exists($json, 'name')) {
-    throw new Exception("Expected $.name to be present, none given.");
-}
-
-if (!is_string($json->name)) {
-    throw new Exception(sprintf("Expected $.id to be a string, %s given.", gettype($json->name)));
-}
-
-$id   = (int)$json['id'];
-$name = $json['name'];
-```
-
-That's 23 lines of code in order to bind `$id` and `$name` such that they are well typed and any invalid document is rejected with a clear error message.
-
-Most will omit all the conditionals and simply assume the correctness of the document.
-If it works, it works, right?
-
-If you want the same thorough structural validation without all the boilerplate, you should use this library!
-Pipette takes care of all the conditionals for you:
-```php
-<?php
-
-use Vcn\Pipette\Json;
-
-$input = <<<JSON
-{
-  "id": 672,
-  "name": "Jane Doe"
-}
-JSON;
-    
-try {
-    $json = Json::parse($input);
-
-    $id   = $json->field('id')->int();
-    $name = $json->field('name')->string();
-} catch (Json\Exception\CantDecode | Json\Exception\AssertionFailed $e) {
-    error_log($e);
-}
-```
-
-One line to validate the syntax.
-One line to extract and bind the `$id` variable.
-One line to extract and bind the `$name` variable.
-One exception if something goes wrong.
-
-Pipette allows you to specify *what* you expect and Pipette gets you exactly what you ask, checking those expectations along the way.
 
 ## Usage
 
@@ -285,6 +186,59 @@ try {
 
 See [examples/huttonsrazor.php](examples/huttonsrazor.php) for another example.
 
+## Validation beyond the types
+
+Pipette also provides a basic interface to hook in stronger validation methods.
+Currently it supports JSON Schema validations through [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema).
+
+The idea is that you can define a `JsonSchemaRepository` as a dependency, that then contains references to `JsonSchemas`.
+These schemas can then validate JSON after it has been parsed, but before you use pipette to transform it into typed data.
+
+```php
+<?php
+
+namespace Vcn\Pipette\Examples;
+
+use JsonSchema\Validator;
+use Vcn\Pipette\Json;
+use Vcn\Pipette\Json\Validators\JsonSchemaRepository;
+
+// Define a dependency.
+// This looks for schema files inside the current directory.
+// See the json-schema library to tailor this behaviour.
+$validator = new Validator();
+$baseUri   = "file://" . __DIR__;
+$schemas   = new JsonSchemaRepository($validator, $baseUri);
+
+try {
+    // Somewhere that has access to this dependency.
+    $parseInt = function (Json\Value $json) {
+        return $json->int();
+    };
+
+    $parseColor = function (Json\Value $json) use ($parseInt) {
+        $name     = $json->field('name')->string();
+        $category = $json->field('category')->string();
+        $type     = $json->¿field('type')->¿string();
+        $codeRgba = $json->field('code')->field('rgba')->arrayMap($parseInt);
+        $codeHex  = $json->field('code')->field('hex')->string();
+
+        return [$name, $category, $type, $codeRgba, $codeHex];
+    };
+
+    $input  = file_get_contents(__DIR__ . '/colors.json');
+    $json   = $schemas->get('/colors.schema.json')->parse($input); // Use the colors.schema.json schema to first validate the JSON before returning.
+    $colors = $json->apply($parseColor);
+
+    print_r($colors);
+
+} catch (Json\Exception\CantDecode | Json\Exception\AssertionFailed $e) {
+    echo $e->getMessage() . "\n";
+}
+```
+
+See the [examples/](examples) directory for a typical request parser setup.
+
 ## Using Pipette for JSON-like data
 
 Under the hood Pipette simply wraps the data returned by `json_decode()` and performs ad-hoc validations based on your queries.
@@ -331,4 +285,4 @@ Pipette's behaviour for any other type is undefined.
 
 ## Tests
 
-Provided by [phpspec](http://www.phpspec.net/en/stable/): `php vendor/bin/phpspec run`
+Powered by [phpspec](http://www.phpspec.net/en/stable/): `php vendor/bin/phpspec run`

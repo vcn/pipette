@@ -1,0 +1,7 @@
+suites:
+  default:
+    spec_prefix: tests
+    psr4_prefix: Vcn\Pipette
+    namespace: Vcn\Pipette
+
+formatter.name: pretty

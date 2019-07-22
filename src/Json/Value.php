@@ -9,6 +9,7 @@ use stdClass;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
 use Vcn\Pipette\Json\Exception;
+use Vcn\Pipette\Json\Validators\Validator;
 
 class Value implements JsonSerializable
 {
@@ -1054,6 +1055,31 @@ class Value implements JsonSerializable
     public function ¿prettyPrint(int $depth = 512): ?string
     {
         return $this->isNull() ? null : $this->prettyPrint($depth);
+    }
+
+    /**
+     * Retrieve the underlying value, whatever it may be.
+     *
+     * @return mixed
+     */
+    public function mixed()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Run the given validator on this value, then return this value.
+     *
+     * @param Validator $validator
+     *
+     * @return Value
+     * @throws Exception\AssertionFailed If this value is not valid according to the given validator.
+     */
+    public function validate(Validator $validator): Value
+    {
+        $validator->validate($this);
+
+        return $this;
     }
 
     /**

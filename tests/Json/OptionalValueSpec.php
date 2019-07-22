@@ -480,9 +480,6 @@ class OptionalValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
      */
     public function it_should_fail_accessing_null_on_non_null()
     {
@@ -497,9 +494,7 @@ class OptionalValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
+     * @throws Exception\AssertionFailed
      */
     public function it_should_apply_functions_to_a_non_null_optional_value()
     {
@@ -516,9 +511,7 @@ class OptionalValueSpec extends ObjectBehavior
 
     /**
      * @test
-     * @throws \PhpSpec\Exception\Fracture\ClassNotFoundException
-     * @throws \PhpSpec\Exception\Fracture\FactoryDoesNotReturnObjectException
-     * @throws \ReflectionException
+     * @throws Exception\AssertionFailed
      */
     public function it_should_return_null_applying_to_a_null_optional_value()
     {

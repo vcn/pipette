@@ -17,7 +17,7 @@ class JsonSchemaRepository
     /**
      * @param \JsonSchema\Validator $validator A validator that schemas will use when performing validation.
      * @param string                $baseUri   A base URI to use. E.g. file:///foo/bar will yield a schema reference to
-     *                                         file:///foo/bar/qux.schema.json if get("qux.schema.json") is called.
+     *                                         file:///foo/bar/qux.schema.json if get("/qux.schema.json") is called.
      */
     public function __construct(\JsonSchema\Validator $validator, string $baseUri)
     {

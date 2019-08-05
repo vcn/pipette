@@ -47,12 +47,33 @@ class JsonSchema implements Validator
             throw new Exception\Runtime($e->getMessage(), 0, $e);
         }
 
+        $errors = [];
+
         foreach ($this->validator->getErrors() as $error) {
+            $errors[] = sprintf(
+                "$%s : %s",
+                $error['property'] !== '' ? sprintf(".%s", $error['property']) : '',
+                $error['message']
+            );
+        }
+
+        if (count($errors) === 1) {
+            throw new Exception\AssertionFailed(sprintf("JSON Schema violation at %s.", $errors[0]));
+        }
+
+        if (count($errors) > 1) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "JSON Schema violation at $%s : %s.",
-                    $error['property'] !== '' ? sprintf(".%s", $error['property']) : '',
-                    $error['message']
+                    "JSON Schema violations:\n    %s",
+                    implode(
+                        "\n    ",
+                        array_map(
+                            function (string $string) {
+                                return $string . '.';
+                            },
+                            $errors
+                        )
+                    )
                 )
             );
         }

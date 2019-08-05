@@ -54,6 +54,36 @@ class JsonSchemaSpec extends ObjectBehavior
     /**
      * @test
      */
+    public function it_should_collapse_multiple_errors(Validator $validator, Json\Value $json)
+    {
+        $ref    = "file:///foo/bar.schema.json";
+        $mixed  = true;
+        $errors = [
+            ['property' => '', 'message' => 'Expected an object, true given'],
+            ['property' => '', 'message' => 'Expected a string, true given'],
+            ['property' => '', 'message' => 'Expected a donkey, true given'],
+        ];
+        $e      = new Exception\AssertionFailed(
+            "JSON Schema violations:\n" .
+            "    $ : Expected an object, true given.\n" .
+            "    $ : Expected a string, true given.\n" .
+            "    $ : Expected a donkey, true given."
+        );
+
+        $this->beConstructedWith($validator, $ref);
+
+        $json->mixed()->willReturn($mixed);
+
+        $validator->reset()->shouldBeCalled();
+        $validator->validate($mixed, (object)['$ref' => $ref])->shouldBeCalled();
+        $validator->getErrors()->willReturn($errors);
+
+        $this->shouldThrow($e)->during('validate', [$json]);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_gracefully_go_pants_up(Validator $validator, Json\Value $json)
     {
         $ref   = "file:///foo/bar";

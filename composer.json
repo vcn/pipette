@@ -27,8 +27,10 @@
   },
 
   "require-dev": {
-    "dragonrun1/phpspec-code-coverage": "^4.2.3",
-    "phpspec/phpspec": "^5.1.0",
+    "ext-pcov": "*",
+
+    "friends-of-phpspec/phpspec-code-coverage": "^4.2.3",
+    "phpspec/phpspec": "^6.1.0",
     "phpunit/phpunit": "^7.1",
     "justinrainbow/json-schema": "^5.2",
     "vcn/enum": "^1.0"

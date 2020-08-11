@@ -19,11 +19,11 @@ class ManyAssertionsFailed extends AssertionFailed
     private $otherFailedAssertions;
 
     /**
-     * @param string            $message
-     * @param int               $code
-     * @param null|Throwable    $previous
-     * @param AssertionFailed   $firstFailedAssertion
-     * @param AssertionFailed[] $otherFailedAssertions
+     * @param string          $message
+     * @param int             $code
+     * @param null|Throwable  $previous
+     * @param AssertionFailed $firstFailedAssertion
+     * @param AssertionFailed ...$otherFailedAssertions
      */
     public function __construct(
         string $message,
@@ -39,8 +39,8 @@ class ManyAssertionsFailed extends AssertionFailed
     }
 
     /**
-     * @param AssertionFailed   $firstFailedAssertion
-     * @param AssertionFailed[] $otherFailedAssertions
+     * @param AssertionFailed $firstFailedAssertion
+     * @param AssertionFailed ...$otherFailedAssertions
      *
      * @return ManyAssertionsFailed
      */
@@ -56,9 +56,9 @@ class ManyAssertionsFailed extends AssertionFailed
     }
 
     /**
-     * @param int               $nestingLevel
-     * @param AssertionFailed   $firstFailedAssertion
-     * @param AssertionFailed[] $otherFailedAssertions
+     * @param int             $nestingLevel
+     * @param AssertionFailed $firstFailedAssertion
+     * @param AssertionFailed ...$otherFailedAssertions
      *
      * @return string
      */
@@ -118,7 +118,7 @@ class ManyAssertionsFailed extends AssertionFailed
     }
 
     /**
-     * @return array [AssertionFailed $firstFailedAssertion, AssertionFailed[] $otherFailedAssertions]
+     * @return array{AssertionFailed, AssertionFailed[]} [$firstFailedAssertion, $otherFailedAssertions]
      */
     public function unconsFailedAssertions(): array
     {

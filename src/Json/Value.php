@@ -180,9 +180,12 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
      *
-     * @return array [a]
+     * @phpstan-param callable(Value): T $f
+     *
+     * @phpstan-return T[]
+     *
      * @throws Exception\AssertionFailed If this value is not an array. Also rethrows any exception thrown by $f.
      */
     public function arrayMap(callable $f): array
@@ -201,9 +204,12 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
      *
-     * @return null|array [a] or null
+     * @phpstan-param callable(Value): T $f
+     *
+     * @phpstan-return T[]|null
+     *
      * @throws Exception\AssertionFailed If this value is not an array nor null. Also rethrows any exception thrown by
      *                                   $f.
      */
@@ -223,9 +229,12 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Int -> Value -> a
+     * @template T
      *
-     * @return array [a]
+     * @phpstan-param callable(int, Value): T $f
+     *
+     * @phpstan-return T[]
+     *
      * @throws Exception\AssertionFailed If this value is not an array. Also rethrows any exception thrown by $f.
      */
     public function arrayMapWithIndex(callable $f): array
@@ -257,9 +266,12 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Int -> Value -> a
+     * @template T
      *
-     * @return null|array [a] or null
+     * @phpstan-param callable(int, Value): T $f
+     *
+     * @phpstan-return T[]|null
+     *
      * @throws Exception\AssertionFailed If this value is not an array nor null. Also rethrows any exception thrown by
      *                                   $f.
      */
@@ -290,9 +302,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
      *
-     * @return array [a]
+     * @phpstan-param callable(Value): T $f
+     *
+     * @phpstan-return T[]
      * @throws Exception\AssertionFailed If this value is not an object. Also rethrows any exception thrown by $f.
      */
     public function objectMap(callable $f): array
@@ -312,9 +326,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
      *
-     * @return array [a] or null
+     * @phpstan-param callable(Value): T $f
+     *
+     * @phpstan-return T[]|null
      * @throws Exception\AssertionFailed If this value is not an object nor null. Also rethrows any exception thrown by
      *                                   $f.
      */
@@ -335,9 +351,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f String -> Value -> a
+     * @template T
      *
-     * @return array [a]
+     * @phpstan-param callable(string, Value): T $f
+     *
+     * @phpstan-return T[]
      * @throws Exception\AssertionFailed If this value is not an object. Also rethrows any exception thrown by $f.
      */
     public function objectMapWithIndex(callable $f): array
@@ -369,9 +387,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f String -> Value -> a
+     * @template T
      *
-     * @return null|array [a] or null
+     * @phpstan-param callable(string, Value): T $f
+     *
+     * @phpstan-return T[]|null
      * @throws Exception\AssertionFailed If this value is not an object nor null. Also rethrows any exception thrown by
      *                                   $f.
      */
@@ -589,9 +609,12 @@ class Value implements JsonSerializable
     /**
      * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
      *
-     * @param string $className
+     * @template T of Enum
      *
-     * @return mixed|Enum
+     * @phpstan-param class-string<T> $className
+     *
+     * @phpstan-return T
+     *
      * @throws Exception\AssertionFailed If this value is not a string, or it is not any of the Enum names from
      *                                   $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
@@ -658,9 +681,12 @@ class Value implements JsonSerializable
      * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
      * instance, or return null.
      *
-     * @param string $className
+     * @template T of Enum
      *
-     * @return null|mixed|Enum
+     * @phpstan-param class-string<T> $className
+     *
+     * @phpstan-return T|null
+     *
      * @throws Exception\AssertionFailed If this value is not a string, nor null, or it is not any of the Enum names
      *                                   from $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
@@ -892,9 +918,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
+     * @phpstan-param callable(Value): T $f
      *
-     * @return mixed a
+     * @phpstan-return T
+     * @return mixed
      * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function apply(callable $f)
@@ -915,9 +943,11 @@ class Value implements JsonSerializable
      *
      * Rethrows any exception thrown by $f.
      *
-     * @param callable $f Value -> a
+     * @template T
+     * @phpstan-param callable(Value): T $f
      *
-     * @return null|mixed a or null
+     * @phpstan-return T|null
+     * @return mixed|null
      * @throws Exception\AssertionFailed Or any other exception thrown by $f.
      */
     public function ¿apply(callable $f)
@@ -939,9 +969,9 @@ class Value implements JsonSerializable
      *
      * Immediately rethrows any other exception.
      *
-     * @param callable   $f  Value -> a
-     * @param callable   $g  Value -> a
-     * @param callable[] $hs [Value -> a]
+     * @param callable $f  Value -> a
+     * @param callable $g  Value -> a
+     * @param callable ...$hs [Value -> a]
      *
      * @return mixed a
      * @throws Exception\ManyAssertionsFailed Or any other exception thrown by $f, $g or $hs.
@@ -972,9 +1002,9 @@ class Value implements JsonSerializable
      *
      * Immediately rethrows any other exception.
      *
-     * @param callable   $f  Value -> a
-     * @param callable   $g  Value -> a
-     * @param callable[] $hs [Value -> a]
+     * @param callable $f  Value -> a
+     * @param callable $g  Value -> a
+     * @param callable ...$hs [Value -> a]
      *
      * @return null|mixed a or null
      * @throws Exception\AssertionFailed Or any other exception thrown by $f, $g or $hs.

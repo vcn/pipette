@@ -11,7 +11,7 @@
   ],
 
   "require": {
-    "php": "^7.1",
+    "php": "^7.4|^8.0",
     "ext-json": "*"
   },
 
@@ -23,17 +23,16 @@
 
   "suggest": {
     "vcn/enum": "To extract Vcn\\Lib\\Enum values.",
-    "justinrainbow/json-schema": "To validate against JSON Schemas."
+    "justinrainbow/json-schema": "To validate against JSON Schemas.",
+    "ext-pcov": "Supplies code coverage data for friends-of-phpspec/phpspec-code-coverage"
   },
 
   "require-dev": {
-    "ext-pcov": "*",
-
-    "friends-of-phpspec/phpspec-code-coverage": "^4.2.3",
-    "phpspec/phpspec": "^6.1.0",
-    "phpunit/phpunit": "^7.1",
+    "friends-of-phpspec/phpspec-code-coverage": "^6.0",
+    "phpspec/phpspec": "^7.0",
+    "phpunit/phpunit": "^9.5",
     "justinrainbow/json-schema": "^5.2",
-    "vcn/enum": "^1.0"
+    "vcn/enum": "dev-FUN-335-php8 as 1.4.0"
   },
 
   "autoload-dev": {

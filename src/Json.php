@@ -58,7 +58,6 @@ class Json
      */
     public static function pretend($value): Value
     {
-        /** @noinspection PhpInternalEntityUsedInspection */
         return new Value($value, '$');
     }
 

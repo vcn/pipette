@@ -11,7 +11,7 @@
   ],
 
   "require": {
-    "php": "^7.1",
+    "php": "^7.4|^8.0",
     "ext-json": "*"
   },
 
@@ -27,11 +27,9 @@
   },
 
   "require-dev": {
-    "ext-pcov": "*",
-
-    "friends-of-phpspec/phpspec-code-coverage": "^4.2.3",
-    "phpspec/phpspec": "^6.1.0",
-    "phpunit/phpunit": "^7.1",
+    "friends-of-phpspec/phpspec-code-coverage": "^6.0",
+    "phpspec/phpspec": "^7.0",
+    "phpunit/phpunit": "^9.5",
     "justinrainbow/json-schema": "^5.2",
     "vcn/enum": "^1.0"
   },

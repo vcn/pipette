@@ -285,4 +285,15 @@ Pipette's behaviour for any other type is undefined.
 
 ## Tests
 
-Powered by [phpspec](http://www.phpspec.net/en/stable/): `php vendor/bin/phpspec run`
+Powered by [phpspec](http://www.phpspec.net/en/stable/). phpspec is configured to gather code coverage information. This requires [xdebug](https://pecl.php.net/package/xdebug) or [pcov](https://pecl.php.net/package/pcov). You can also disable code coverage.
+
+```
+# default (using pcov)
+php vendor/bin/phpspec run
+
+# xdebug coverage
+XDEBUG_MODE=coverage php vendor/bin/phpspec run
+
+# no code coverage
+php vendor/bin/phpspec run -c phpspec-nocc.yml
+```

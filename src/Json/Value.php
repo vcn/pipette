@@ -561,22 +561,22 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string, assert it conforms to a given date time format, then return that date time.
+     * Assert this value is a string or int, assert it conforms to a given date time format, then return that date time.
      *
      * @param string $format
      *
      * @return DateTimeImmutable
-     * @throws Exception\AssertionFailed If this value is not a string, or does not conform to the given format.
+     * @throws Exception\AssertionFailed If this value is not a string or int, or does not conform to the given format.
      */
     public function dateTime(string $format = DateTime::ATOM): DateTimeImmutable
     {
-        $string = $this->string();
+        $string = $this->isNumber() ? (string)$this->int() : $this->string();
         $result = DateTimeImmutable::createFromFormat($format, $string);
 
         if ($result === false) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected %s to be a date time string according to format %s, '%s' given.",
+                    "Expected %s to be a date time string or int according to format %s, '%s' given.",
                     $this->pointer,
                     $format,
                     $string

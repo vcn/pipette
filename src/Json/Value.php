@@ -561,22 +561,22 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string or int, assert it conforms to a given date time format, then return that date time.
+     * Assert this value is a string, assert it conforms to a given date time format, then return that date time.
      *
      * @param string $format
      *
      * @return DateTimeImmutable
-     * @throws Exception\AssertionFailed If this value is not a string or int, or does not conform to the given format.
+     * @throws Exception\AssertionFailed If this value is not a string, or does not conform to the given format.
      */
     public function dateTime(string $format = DateTime::ATOM): DateTimeImmutable
     {
-        $string = $this->isNumber() ? (string)$this->int() : $this->string();
+        $string = $this->string();
         $result = DateTimeImmutable::createFromFormat($format, $string);
 
         if ($result === false) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected %s to be a date time string or int according to format %s, '%s' given.",
+                    "Expected %s to be a date time string according to format %s, '%s' given.",
                     $this->pointer,
                     $format,
                     $string
@@ -604,6 +604,49 @@ class Value implements JsonSerializable
         }
 
         return $this->dateTime($format);
+    }
+
+    /**
+     * Assert this value is a number, assert it conforms to the 'U' date time format, then return that date time.
+     * For timestamp strings, use dateTime('U').
+     *
+     * @return DateTimeImmutable
+     * @throws Exception\AssertionFailed If this value is not a number, or does not conform to the 'U' format.
+     */
+    public function timestamp(): DateTimeImmutable
+    {
+        $string = (string)$this->int();
+        $result = DateTimeImmutable::createFromFormat('U', $string);
+
+        if ($result === false) {
+            throw new Exception\AssertionFailed(
+                sprintf(
+                    "Expected %s to be a number according to date time format %s, '%s' given.",
+                    $this->pointer,
+                    'U',
+                    Json::prettyPrintType($this->value)
+                )
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Assert this value is a number or null, assert it conforms to the 'U' date time format, then return that
+     * date time, or return null.
+     *
+     * @return null|DateTimeImmutable
+     * @throws Exception\AssertionFailed If this value is not a number, nor null, or does not conform to the 'U'
+     *                                   format.
+     */
+    public function ¿timestamp(): ?DateTimeImmutable
+    {
+        if ($this->isNull()) {
+            return $this->value;
+        }
+
+        return $this->timestamp();
     }
 
     /**

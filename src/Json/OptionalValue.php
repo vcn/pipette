@@ -296,6 +296,22 @@ class OptionalValue implements JsonSerializable
     }
 
     /**
+     * Assert this value is a number or null, assert it conforms to the 'U' date time format, then return that
+     * date time, or return null.
+     *
+     * @return null|DateTimeImmutable
+     * @throws Exception\AssertionFailed If this value is not a number, nor null.
+     */
+    public function ¿timestamp(): ?DateTimeImmutable
+    {
+        if ($this->isNull()) {
+            return null;
+        }
+
+        return $this->value->timestamp();
+    }
+
+    /**
      * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
      * instance, or return null.
      *

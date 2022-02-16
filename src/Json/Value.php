@@ -607,38 +607,22 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a number, assert it conforms to the 'U' date time format, then return that date time.
-     * For timestamp strings, use dateTime('U').
+     * Assert this value is a number, then return a date time measured in that many seconds since the Unix Epoch.
      *
      * @return DateTimeImmutable
-     * @throws Exception\AssertionFailed If this value is not a number, or does not conform to the 'U' format.
+     * @throws Exception\AssertionFailed If this value is not a number, or an invalid Unix Epoch.
      */
     public function timestamp(): DateTimeImmutable
     {
-        $string = (string)$this->int();
-        $result = DateTimeImmutable::createFromFormat('U', $string);
+        $int = $this->int();
 
-        if ($result === false) {
-            throw new Exception\AssertionFailed(
-                sprintf(
-                    "Expected %s to be a number according to date time format %s, '%s' given.",
-                    $this->pointer,
-                    'U',
-                    Json::prettyPrintType($this->value)
-                )
-            );
-        }
-
-        return $result;
+        return new DateTimeImmutable("@$int");
     }
 
-    /**
-     * Assert this value is a number or null, assert it conforms to the 'U' date time format, then return that
-     * date time, or return null.
+    /**Assert this value is a number, then return a date time measured in that many seconds since the Unix Epoch.
      *
      * @return null|DateTimeImmutable
-     * @throws Exception\AssertionFailed If this value is not a number, nor null, or does not conform to the 'U'
-     *                                   format.
+     * @throws Exception\AssertionFailed If this value is not a number, nor null, or an invalid Unix Epoch.
      */
     public function ¿timestamp(): ?DateTimeImmutable
     {

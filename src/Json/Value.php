@@ -1149,10 +1149,7 @@ class Value implements JsonSerializable
         return $this->pointer;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

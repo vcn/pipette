@@ -28,7 +28,7 @@
 
   "require-dev": {
     "friends-of-phpspec/phpspec-code-coverage": "^6.0",
-    "phpspec/phpspec": "dev-main",
+    "phpspec/phpspec": "^7.2",
     "phpunit/phpunit": "^9.5",
     "justinrainbow/json-schema": "^5.2",
     "vcn/enum": "^1.0"

@@ -311,6 +311,32 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
+    public function it_should_provide_a_date_if_accessing_a_non_null_optional_timestamp()
+    {
+        $json = 1;
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿timestamp()->shouldBeAnInstanceOf(DateTimeImmutable::class);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_timestamp()
+    {
+        $json = null;
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿timestamp()->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
     public function it_should_provide_a_date_if_accessing_a_non_null_optional_date()
     {
         $json   = "2018-01-01";

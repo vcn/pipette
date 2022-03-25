@@ -607,6 +607,33 @@ class Value implements JsonSerializable
     }
 
     /**
+     * Assert this value is a number, then return a date time measured in that many seconds since the Unix Epoch.
+     *
+     * @return DateTimeImmutable
+     * @throws Exception\AssertionFailed If this value is not a number, or an invalid Unix Epoch.
+     */
+    public function timestamp(): DateTimeImmutable
+    {
+        $int = $this->int();
+
+        return new DateTimeImmutable("@$int");
+    }
+
+    /**Assert this value is a number, then return a date time measured in that many seconds since the Unix Epoch.
+     *
+     * @return null|DateTimeImmutable
+     * @throws Exception\AssertionFailed If this value is not a number, nor null, or an invalid Unix Epoch.
+     */
+    public function ¿timestamp(): ?DateTimeImmutable
+    {
+        if ($this->isNull()) {
+            return $this->value;
+        }
+
+        return $this->timestamp();
+    }
+
+    /**
      * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
      *
      * @template T of Enum
@@ -1122,10 +1149,7 @@ class Value implements JsonSerializable
         return $this->pointer;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->value;
     }

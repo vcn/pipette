@@ -520,6 +520,61 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
+    public function it_should_provide_a_date_if_accessing_a_int()
+    {
+        $json = 1;
+
+        $this->beConstructedWith($json, '$');
+
+        $this->timestamp()->shouldBeAnInstanceOf(DateTimeImmutable::class);
+        $this->timestamp()->format('Y-m-d\TH:i:s')->shouldBe('1970-01-01T00:00:01');
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_accessing_a_timestamp_on_a_non_int()
+    {
+        $json = null;
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed("Expected $ to be a number, null given.");
+
+        $this->shouldThrow($e)->during('timestamp', []);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_date_if_accessing_a_non_null_optional_timestamp()
+    {
+        $json = 1;
+
+        $this->beConstructedWith($json, '$');
+
+        $this->¿timestamp()->shouldBeAnInstanceOf(DateTimeImmutable::class);
+        $this->¿timestamp()->format('Y-m-d\TH:i:s')->shouldBe('1970-01-01T00:00:01');
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_timestamp()
+    {
+        $json = null;
+
+        $this->beConstructedWith($json, '$');
+
+        $this->¿timestamp()->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
     public function it_should_provide_a_date_if_accessing_a_date()
     {
         $json   = "2018-01-01";

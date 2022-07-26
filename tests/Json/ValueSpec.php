@@ -3,6 +3,7 @@
 namespace tests\Vcn\Pipette\Json;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use PhpSpec\ObjectBehavior;
 use tests\res\Vcn\Pipette\EmptyEnum;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
@@ -1234,5 +1235,48 @@ class ValueSpec extends ObjectBehavior
         $validator->validate($this)->willThrow($e)->shouldBeCalled();
 
         $this->shouldThrow($e)->during('validate', [$validator]);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_datetime_if_accessing_a_datetime_with_the_default_atom_format()
+    {
+        // created using `(new DateTime())->format(DATE_ATOM)`
+        $json = "2022-07-26T12:00:03+00:00";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->dateTime()->format(DATE_ATOM)->shouldBe($json);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_datetime_if_accessing_a_datetime_with_a_custom_format()
+    {
+        // 1984-01-01 12:13:14 but using format 'i:d_H s-Y-m'
+        // Created using `DateTime::createFromFormat('Y-m-d H:i:s', '1984-01-01 12:13:14')->format('i:d_H s-Y-m')`
+        $json = "13:01_12 14-1984-01";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->dateTime('i:d_H s-Y-m')->format('Y-m-d H:i:s')->shouldBe('1984-01-01 12:13:14');
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_datetime_with_the_provided_timezone_if_accessing_a_datetime_without_timezone()
+    {
+        $json = "2018-01-01 01:02:03";
+
+        $this->beConstructedWith($json, '$');
+
+        $defaultZone = new DateTimeZone('+08:00');
+        $this->dateTime('Y-m-d H:i:s', $defaultZone)->format('P')->shouldBe('+08:00');
     }
 }

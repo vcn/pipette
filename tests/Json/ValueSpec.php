@@ -1270,19 +1270,6 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_a_datetime_with_the_default_timezone_if_accessing_a_datetime_without_timezone()
-    {
-        $json = "2018-01-01 01:02:03";
-
-        $this->beConstructedWith($json, '$');
-
-        $this->dateTime('Y-m-d H:i:s')->format('T')->shouldBe(date_default_timezone_get());
-    }
-
-    /**
-     * @test
-     * @throws Exception\AssertionFailed
-     */
     public function it_should_provide_a_datetime_with_the_provided_timezone_if_accessing_a_datetime_without_timezone()
     {
         $json = "2018-01-01 01:02:03";

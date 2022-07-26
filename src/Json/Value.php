@@ -4,6 +4,7 @@ namespace Vcn\Pipette\Json;
 
 use DateTime;
 use DateTimeImmutable;
+use DateTimeZone;
 use JsonSerializable;
 use stdClass;
 use Vcn\Lib\Enum;
@@ -568,10 +569,10 @@ class Value implements JsonSerializable
      * @return DateTimeImmutable
      * @throws Exception\AssertionFailed If this value is not a string, or does not conform to the given format.
      */
-    public function dateTime(string $format = DateTime::ATOM): DateTimeImmutable
+    public function dateTime(string $format = DateTime::ATOM, ?DateTimeZone $timezone = null): DateTimeImmutable
     {
         $string = $this->string();
-        $result = DateTimeImmutable::createFromFormat($format, $string);
+        $result = DateTimeImmutable::createFromFormat($format, $string, $timezone);
 
         if ($result === false) {
             throw new Exception\AssertionFailed(
@@ -597,13 +598,13 @@ class Value implements JsonSerializable
      * @throws Exception\AssertionFailed If this value is not a string, nor null, or does not conform to the given
      *                                   format.
      */
-    public function ¿dateTime(string $format = DateTime::ATOM): ?DateTimeImmutable
+    public function ¿dateTime(string $format = DateTime::ATOM, ?DateTimeZone $timezone = null): ?DateTimeImmutable
     {
         if ($this->isNull()) {
             return $this->value;
         }
 
-        return $this->dateTime($format);
+        return $this->dateTime($format, $timezone);
     }
 
     /**

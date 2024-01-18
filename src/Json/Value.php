@@ -2,11 +2,14 @@
 
 namespace Vcn\Pipette\Json;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use JsonSerializable;
 use stdClass;
+use UnitEnum;
+use ValueError;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
 use Vcn\Pipette\Json\Exception;
@@ -637,7 +640,7 @@ class Value implements JsonSerializable
     /**
      * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
      *
-     * @template T of Enum
+     * @template T of Enum|BackedEnum
      *
      * @phpstan-param class-string<T> $className
      *
@@ -647,25 +650,67 @@ class Value implements JsonSerializable
      *                                   $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
      */
-    public function enum(string $className): Enum
+    public function enum(string $className): Enum | BackedEnum
     {
-        if (!class_exists(Enum::class)) {
-            // @codeCoverageIgnoreStart
-            throw new Exception\Runtime(
-                sprintf(
-                    "Class %s does not exist. Did you include the library?",
-                    Enum::class
-                )
-            );
-            // @codeCoverageIgnoreEnd
-        }
-
         if (!class_exists($className)) {
             throw new Exception\Runtime(sprintf("Class %s does not exist.", $className));
         }
 
-        if (!is_subclass_of($className, Enum::class)) {
-            throw new Exception\Runtime(sprintf("Class %s does not extend %s.", $className, Enum::class));
+        // support native enums
+        if (is_subclass_of($className, BackedEnum::class)) {
+            $string = $this->string();
+
+            if ($className::cases() === []) {
+                throw new Exception\AssertionFailed(
+                    sprintf(
+                        "Expected field %s to be enumeration constant '%s', but the enumeration itself is empty.",
+                        $this->pointer,
+                        $string
+                    )
+                );
+            }
+
+            try {
+                return $className::from($string);
+            } catch (ValueError) {
+                $failedAssertions = array_map(
+                    function (BackedEnum $enum) use ($string) {
+                        return new Exception\AssertionFailed(
+                            sprintf(
+                                "Expected %s to be enumeration constant '%s', '%s' given.",
+                                $this->getPointer(),
+                                $enum->value,
+                                $string
+                            )
+                        );
+                    },
+                    $className::cases()
+                );
+
+                throw Json\Exception\ManyAssertionsFailed::fromFailedAssertions(
+                    $failedAssertions[0],
+                    ...array_slice($failedAssertions, 1)
+                );
+            }
+        }
+
+        // Not a native enum? then fall back to vcn\lib\enum
+        if (!is_subclass_of($className, UnitEnum::class)) {
+            if (!class_exists(Enum::class)) {
+                // @codeCoverageIgnoreStart
+                throw new Exception\Runtime(
+                    sprintf(
+                        "Class %s is not a native enum and Class %s does not exist. Did you include the library?",
+                        $className,
+                        Enum::class
+                    )
+                );
+                // @codeCoverageIgnoreEnd
+            }
+
+            if (!is_subclass_of($className, Enum::class)) {
+                throw new Exception\Runtime(sprintf("Class %s is not a native enum and does not extend %s.", $className, Enum::class));
+            }
         }
 
         $string = $this->string();
@@ -674,7 +719,7 @@ class Value implements JsonSerializable
         if ($className::getAllInstances() === []) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected field %s to by any of no enumeration constants, '%s' given.",
+                    "Expected field %s to be enumeration constant '%s', but the enumeration itself is empty.",
                     $this->pointer,
                     $string
                 )
@@ -699,7 +744,7 @@ class Value implements JsonSerializable
             );
 
             throw Json\Exception\ManyAssertionsFailed::fromFailedAssertions(
-                reset($failedAssertions),
+                $failedAssertions[0],
                 ...array_slice($failedAssertions, 1)
             );
         }
@@ -709,7 +754,7 @@ class Value implements JsonSerializable
      * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
      * instance, or return null.
      *
-     * @template T of Enum
+     * @template T of BackedEnum|Enum
      *
      * @phpstan-param class-string<T> $className
      *
@@ -719,7 +764,7 @@ class Value implements JsonSerializable
      *                                   from $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
      */
-    public function ¿enum(string $className): ?Enum
+    public function ¿enum(string $className): null | BackedEnum | Enum
     {
         if ($this->isNull()) {
             return $this->value;

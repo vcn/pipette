@@ -6,7 +6,9 @@ use DateTimeImmutable;
 use DateTimeZone;
 use PhpSpec\ObjectBehavior;
 use tests\res\Vcn\Pipette\EmptyEnum;
+use tests\res\Vcn\Pipette\EmptyVcnEnum;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
+use tests\res\Vcn\Pipette\NonEmptyVcnEnum;
 use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Validators\Validator;
 use Vcn\Pipette\Json\Value;
@@ -648,19 +650,53 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_an_enum()
+    public function it_should_provide_an_enum_if_accessing_an_enum_vcn_variant(): void
     {
         $json = "A";
 
         $this->beConstructedWith($json, '$');
 
-        $this->enum(NonEmptyEnum::class)->shouldBe(NonEmptyEnum::A());
+        $this->enum(NonEmptyVcnEnum::class)->shouldBe(NonEmptyVcnEnum::A());
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_an_enum_if_accessing_an_enum_native_variant(): void
+    {
+        $json = "A";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->enum(NonEmptyEnum::class)->shouldBe(NonEmptyEnum::A);
     }
 
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_instance_is_not_known()
+    public function it_should_fail_accessing_an_enum_if_the_instance_is_not_known_vcn_variant(): void
+    {
+        $json = "D";
+
+        $this->beConstructedWith($json, '$');
+
+        // phpspec vomits if you actually build the nested exception.
+        $e = new \Exception(
+            "Expected any of the following:\n" .
+            "    - Expected $ to be enumeration constant 'A', 'D' given.\n" .
+            "    - Expected $ to be enumeration constant 'B', 'D' given.\n" .
+            "    - Expected $ to be enumeration constant 'C', 'D' given."
+        );
+
+
+        $this->shouldThrow($e)->during('enum', [NonEmptyVcnEnum::class]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_accessing_an_enum_if_the_instance_is_not_known_native_variant(): void
     {
         $json = "D";
 
@@ -681,13 +717,27 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_enum_is_empty()
+    public function it_should_fail_accessing_an_enum_if_the_enum_is_empty_vcn_variant(): void
     {
         $json = "A";
 
         $this->beConstructedWith($json, '$');
 
-        $e = new Exception\AssertionFailed("Expected field $ to by any of no enumeration constants, 'A' given.");
+        $e = new Exception\AssertionFailed("Expected field $ to be enumeration constant 'A', but the enumeration itself is empty.");
+
+        $this->shouldThrow($e)->during('enum', [EmptyVcnEnum::class]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_accessing_an_enum_if_the_enum_is_empty_native_variant(): void
+    {
+        $json = "A";
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed("Expected field $ to be enumeration constant 'A', but the enumeration itself is empty.");
 
         $this->shouldThrow($e)->during('enum', [EmptyEnum::class]);
     }
@@ -695,7 +745,7 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_enum_does_not_exist()
+    public function it_should_fail_accessing_an_enum_if_the_enum_does_not_exist(): void
     {
         $json = "A";
 
@@ -712,20 +762,46 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum()
+    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_vcn_Variant(): void
     {
         $json = "A";
 
         $this->beConstructedWith($json, '$');
 
-        $this->¿enum(NonEmptyEnum::class)->shouldBe(NonEmptyEnum::A());
+        $this->¿enum(NonEmptyVcnEnum::class)->shouldBe(NonEmptyVcnEnum::A());
     }
 
     /**
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum()
+    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_native_variant(): void
+    {
+        $json = "A";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->¿enum(NonEmptyEnum::class)->shouldBe(NonEmptyEnum::A);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_enum_vcn_variant(): void
+    {
+        $json = null;
+
+        $this->beConstructedWith($json, '$');
+
+        $this->¿enum(NonEmptyVcnEnum::class)->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_enum_native_variant(): void
     {
         $json = null;
 

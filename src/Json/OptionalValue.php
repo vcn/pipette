@@ -2,6 +2,7 @@
 
 namespace Vcn\Pipette\Json;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -316,7 +317,7 @@ class OptionalValue implements JsonSerializable
      * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
      * instance, or return null.
      *
-     * @template T of Enum
+     * @template T of Enum|BackedEnum
      *
      * @phpstan-param class-string<T> $className
      *
@@ -325,7 +326,7 @@ class OptionalValue implements JsonSerializable
      *                                   from $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
      */
-    public function ¿enum(string $className): ?Enum
+    public function ¿enum(string $className): null | BackedEnum | Enum
     {
         if ($this->isNull()) {
             return null;

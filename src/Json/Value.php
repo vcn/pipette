@@ -6,7 +6,10 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use JsonSerializable;
+use ReflectionEnum;
 use stdClass;
+use StringBackedEnum;
+use UnitEnum;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
 use Vcn\Pipette\Json\Exception;
@@ -637,7 +640,7 @@ class Value implements JsonSerializable
     /**
      * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
      *
-     * @template T of Enum
+     * @template T of Enum|UnitEnum
      *
      * @phpstan-param class-string<T> $className
      *
@@ -647,8 +650,36 @@ class Value implements JsonSerializable
      *                                   $className.
      * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
      */
-    public function enum(string $className): Enum
+    public function enum(string $className): Enum|UnitEnum
     {
+        if (enum_exists($className)) {
+            $string = $this->string();
+
+            try {
+                return (new ReflectionEnum($className))->getCase($string)->getValue();
+            } catch (\ReflectionException $e) {
+                $failedAssertions = array_map(
+                    function (UnitEnum $enum) use ($string) {
+                        return new Exception\AssertionFailed(
+                            sprintf(
+                                "Expected %s to be enumeration constant '%s', '%s' given.",
+                                $this->getPointer(),
+                                $enum->name,
+                                $string
+                            )
+                        );
+                    },
+                    $className::cases()
+                );
+
+                throw Json\Exception\ManyAssertionsFailed::fromFailedAssertions(
+                    reset($failedAssertions),
+                    ...array_slice($failedAssertions, 1)
+                );
+            }
+        }
+
+        // Handles non-native enum from package vcn/enum.
         if (!class_exists(Enum::class)) {
             // @codeCoverageIgnoreStart
             throw new Exception\Runtime(

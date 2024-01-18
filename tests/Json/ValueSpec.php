@@ -7,6 +7,7 @@ use DateTimeZone;
 use PhpSpec\ObjectBehavior;
 use tests\res\Vcn\Pipette\EmptyEnum;
 use tests\res\Vcn\Pipette\NonEmptyEnum;
+use tests\res\Vcn\Pipette\NonEmptyNativeEnum;
 use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Validators\Validator;
 use Vcn\Pipette\Json\Value;
@@ -642,6 +643,19 @@ class ValueSpec extends ObjectBehavior
         $this->beConstructedWith($json, '$');
 
         $this->¿date($format)->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_native_enum_if_accessing_a_native_enum()
+    {
+        $json = "A";
+
+        $this->beConstructedWith($json, '$');
+
+        $this->enum(NonEmptyNativeEnum::class)->shouldBe(NonEmptyNativeEnum::A);
     }
 
     /**

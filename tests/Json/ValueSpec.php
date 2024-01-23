@@ -752,7 +752,7 @@ class ValueSpec extends ObjectBehavior
         $this->beConstructedWith($json, '$');
 
         $e1 = new Exception\Runtime("Class NotAnEnum does not exist.");
-        $e2 = new Exception\Runtime("Class Vcn\Pipette\Json does not extend Vcn\Lib\Enum.");
+        $e2 = new Exception\Runtime("Class Vcn\Pipette\Json is not a native backed enum and does not extend Vcn\Lib\Enum.");
 
         $this->shouldThrow($e1)->during('enum', ['NotAnEnum']);
         $this->shouldThrow($e2)->during('enum', ['Vcn\Pipette\Json']);

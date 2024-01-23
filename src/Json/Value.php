@@ -700,7 +700,7 @@ class Value implements JsonSerializable
                 // @codeCoverageIgnoreStart
                 throw new Exception\Runtime(
                     sprintf(
-                        "Class %s is not a native enum and Class %s does not exist. Did you include the library?",
+                        "Class %s is not a native backed enum and Class %s does not exist. Did you include the library?",
                         $className,
                         Enum::class
                     )
@@ -709,7 +709,7 @@ class Value implements JsonSerializable
             }
 
             if (!is_subclass_of($className, Enum::class)) {
-                throw new Exception\Runtime(sprintf("Class %s is not a native enum and does not extend %s.", $className, Enum::class));
+                throw new Exception\Runtime(sprintf("Class %s is not a native backed enum and does not extend %s.", $className, Enum::class));
             }
         }
 

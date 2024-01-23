@@ -650,7 +650,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_an_enum_vcn_variant(): void
+    public function it_should_provide_a_vcn_enum_if_accessing_a_vcn_enum(): void
     {
         $json = "A";
 
@@ -663,7 +663,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_an_enum_native_variant(): void
+    public function it_should_provide_a_native_enum_if_accessing_a_native_enum(): void
     {
         $json = "A";
 
@@ -675,7 +675,7 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_instance_is_not_known_vcn_variant(): void
+    public function it_should_fail_accessing_a_vcn_enum_if_the_instance_is_not_known(): void
     {
         $json = "D";
 
@@ -696,7 +696,7 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_instance_is_not_known_native_variant(): void
+    public function it_should_fail_accessing_a_native_enum_if_the_instance_is_not_known(): void
     {
         $json = "D";
 
@@ -717,7 +717,7 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_enum_is_empty_vcn_variant(): void
+    public function it_should_fail_accessing_a_vcn_enum_if_the_enum_is_empty(): void
     {
         $json = "A";
 
@@ -731,7 +731,7 @@ class ValueSpec extends ObjectBehavior
     /**
      * @test
      */
-    public function it_should_fail_accessing_an_enum_if_the_enum_is_empty_native_variant(): void
+    public function it_should_fail_accessing_a_native_enum_if_the_enum_is_empty(): void
     {
         $json = "A";
 
@@ -762,7 +762,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_vcn_Variant(): void
+    public function it_should_provide_a_vcn_enum_if_accessing_a_non_null_optional_vcn_enum(): void
     {
         $json = "A";
 
@@ -775,7 +775,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_native_variant(): void
+    public function it_should_provide_a_native_enum_if_accessing_a_non_null_optional_native_enum(): void
     {
         $json = "A";
 
@@ -788,7 +788,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum_vcn_variant(): void
+    public function it_should_provide_null_if_accessing_a_null_optional_vcn_enum(): void
     {
         $json = null;
 
@@ -801,7 +801,7 @@ class ValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum_native_variant(): void
+    public function it_should_provide_null_if_accessing_a_null_optional_native_enum(): void
     {
         $json = null;
 

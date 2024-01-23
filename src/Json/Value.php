@@ -8,11 +8,9 @@ use DateTimeImmutable;
 use DateTimeZone;
 use JsonSerializable;
 use stdClass;
-use UnitEnum;
 use ValueError;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
-use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Validators\Validator;
 
 class Value implements JsonSerializable
@@ -695,7 +693,7 @@ class Value implements JsonSerializable
         }
 
         // Not a native enum? then fall back to vcn\lib\enum
-        if (!is_subclass_of($className, UnitEnum::class)) {
+        if (!is_subclass_of($className, BackedEnum::class)) {
             if (!class_exists(Enum::class)) {
                 // @codeCoverageIgnoreStart
                 throw new Exception\Runtime(

@@ -366,7 +366,7 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_vcn_variant(): void
+    public function it_should_provide_a_vcn_enum_if_accessing_a_non_null_optional_vcn_enum(): void
     {
         $json = "A";
 
@@ -379,7 +379,7 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum_vcn_variant(): void
+    public function it_should_provide_null_if_accessing_a_null_optional_vcn_enum(): void
     {
         $json = null;
 
@@ -392,7 +392,7 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum_native_variant(): void
+    public function it_should_provide_a_native_enum_if_accessing_a_non_null_optional_native_enum(): void
     {
         $json = "A";
 
@@ -405,7 +405,7 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum_native_variant(): void
+    public function it_should_provide_null_if_accessing_a_null_optional_native_enum(): void
     {
         $json = null;
 

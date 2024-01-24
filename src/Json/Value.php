@@ -656,29 +656,29 @@ class Value implements JsonSerializable
 
         // support native enums
         if (is_subclass_of($className, BackedEnum::class)) {
-            $string = $this->string();
+            $value = $this->value;
 
             if ($className::cases() === []) {
                 throw new Exception\AssertionFailed(
                     sprintf(
                         "Expected field %s to be enumeration constant '%s', but the enumeration itself is empty.",
                         $this->pointer,
-                        $string
+                        $value
                     )
                 );
             }
 
             try {
-                return $className::from($string);
+                return $className::from($value);
             } catch (ValueError) {
                 $failedAssertions = array_map(
-                    function (BackedEnum $enum) use ($string) {
+                    function (BackedEnum $enum) use ($value) {
                         return new Exception\AssertionFailed(
                             sprintf(
                                 "Expected %s to be enumeration constant '%s', '%s' given.",
                                 $this->getPointer(),
                                 $enum->value,
-                                $string
+                                $value
                             )
                         );
                     },

@@ -636,7 +636,9 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
+     * Assert this value is valid within the enum-context, returning the enumeration instance
+     * - for BackedEnum's: Assert the value is a valid representation of the given enum, returning that BackedEnum instance
+     * - for vcn\enum's: Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
      *
      * @template T of Enum|BackedEnum
      *
@@ -644,9 +646,9 @@ class Value implements JsonSerializable
      *
      * @phpstan-return T
      *
-     * @throws Exception\AssertionFailed If this value is not a string, or it is not any of the Enum names from
-     *                                   $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
+     * @throws Exception\AssertionFailed If this value is not a string (if $className extends Enum),
+     *                                   or it is not any of the enumerated names from $className.
+     * @throws Exception\Runtime         If $className does not exist, or does not extend either BackedEnum or Enum.
      */
     public function enum(string $className): Enum | BackedEnum
     {
@@ -749,8 +751,11 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
-     * instance, or return null.
+     * Assert this value is either null, returning that null, or is valid within the enum-context, returning the enumeration instance
+     * - for BackedEnum's: Assert the value is a valid representation of the given enum, or null,
+     *   returning that BackedEnum instance or null.
+     * - for vcn\enum's: Assert this value is a string or null, assert it is any of the names of the given Enum,
+     *   then return that Enum instance, or null.
      *
      * @template T of BackedEnum|Enum
      *
@@ -758,9 +763,9 @@ class Value implements JsonSerializable
      *
      * @phpstan-return T|null
      *
-     * @throws Exception\AssertionFailed If this value is not a string, nor null, or it is not any of the Enum names
-     *                                   from $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
+     * @throws Exception\AssertionFailed If this value is not a string (if $className extends Enum), nor null,
+     *                                   or it is not any of the enumerated names from $className.
+     * @throws Exception\Runtime         If $className does not exist, or does not extend either BackedEnum or Enum.
      */
     public function ¿enum(string $className): null | BackedEnum | Enum
     {

@@ -694,23 +694,19 @@ class Value implements JsonSerializable
             }
         }
 
-        // Not a native enum? then fall back to vcn\lib\enum
-        if (!is_subclass_of($className, BackedEnum::class)) {
-            if (!class_exists(Enum::class)) {
-                // @codeCoverageIgnoreStart
-                throw new Exception\Runtime(
-                    sprintf(
-                        "Class %s is not a native backed enum and Class %s does not exist. Did you include the library?",
-                        $className,
-                        Enum::class
-                    )
-                );
-                // @codeCoverageIgnoreEnd
-            }
+        // BackedEnum has been handled. Additional valid cases must be a vcn\lib\enum, because regular UnitEnum is not supported
+        if (!class_exists(Enum::class)) {
+            throw new Exception\Runtime(
+                sprintf(
+                    "Class %s is not a native backed enum and Class %s does not exist. Did you include the library?",
+                    $className,
+                    Enum::class
+                )
+            );
+        }
 
-            if (!is_subclass_of($className, Enum::class)) {
-                throw new Exception\Runtime(sprintf("Class %s is not a native backed enum and does not extend %s.", $className, Enum::class));
-            }
+        if (!is_subclass_of($className, Enum::class)) {
+            throw new Exception\Runtime(sprintf("Class %s is not a native backed enum and does not extend %s.", $className, Enum::class));
         }
 
         $string = $this->string();

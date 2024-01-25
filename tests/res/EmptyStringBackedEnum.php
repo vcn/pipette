@@ -2,6 +2,6 @@
 
 namespace tests\res\Vcn\Pipette;
 
-enum EmptyEnum: string
+enum EmptyStringBackedEnum: string
 {
 }

@@ -2,7 +2,7 @@
 
 namespace tests\res\Vcn\Pipette;
 
-enum NonEmptyEnum: string
+enum NonEmptyStringBackedEnum: string
 {
     case A = 'A';
     case B = 'B';

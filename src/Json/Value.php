@@ -636,19 +636,22 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is valid within the enum-context, returning the enumeration instance
-     * - for BackedEnum's: Assert the value is a valid representation of the given enum, returning that BackedEnum instance
-     * - for vcn\enum's: Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
+     * Assert this value is a valid value for the provided enum class, returning the corresponding enum case. Supports
+     *  string- and int-backed enums. Also supports enums from the package `vcn/enum`.
      *
-     * @template T of Enum|BackedEnum
+     *  For string- and int-backed enums, the JSON value should equal the type and value of a value backing an enum case.
+     *
+     *  For enums from package `vcn/enum`, the value should be a string and should equal the name of the enum case.
+     *
+     * @template T of BackedEnum|Enum
      *
      * @phpstan-param class-string<T> $className
      *
      * @phpstan-return T
      *
-     * @throws Exception\AssertionFailed If this value is not a string (if $className extends Enum),
-     *                                   or it is not any of the enumerated names from $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend either BackedEnum or Enum.
+     * @throws Exception\AssertionFailed If the provided value could not be interpreted as a case of the provided
+     *                                    enum class.
+     * @throws Exception\Runtime         If $className does not exist, or is not a valid enum.
      */
     public function enum(string $className): Enum | BackedEnum
     {
@@ -747,11 +750,12 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is either null, returning that null, or is valid within the enum-context, returning the enumeration instance
-     * - for BackedEnum's: Assert the value is a valid representation of the given enum, or null,
-     *   returning that BackedEnum instance or null.
-     * - for vcn\enum's: Assert this value is a string or null, assert it is any of the names of the given Enum,
-     *   then return that Enum instance, or null.
+     * Assert this value is `null` or a valid value for the provided enum class, returning the corresponding enum case. Supports
+     *  string- and int-backed enums. Also supports enums from the package `vcn/enum`.
+     *
+     *  For string- and int-backed enums, the JSON value should equal the type and value of a value backing an enum case, or be null.
+     *
+     *  For enums from package `vcn/enum`, the value should be a string, and should equal the name of the enum case, or be null.
      *
      * @template T of BackedEnum|Enum
      *
@@ -759,9 +763,9 @@ class Value implements JsonSerializable
      *
      * @phpstan-return T|null
      *
-     * @throws Exception\AssertionFailed If this value is not a string (if $className extends Enum), nor null,
-     *                                   or it is not any of the enumerated names from $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend either BackedEnum or Enum.
+     * @throws Exception\AssertionFailed If the provided value could not be interpreted as a case of the provided
+     *                                     enum class and is inequal to null.
+     * @throws Exception\Runtime         If $className does not exist, or is not a valid enum.
      */
     public function ¿enum(string $className): null | BackedEnum | Enum
     {

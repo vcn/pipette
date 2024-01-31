@@ -314,12 +314,16 @@ class OptionalValue implements JsonSerializable
     }
 
     /**
-     * Assert this value is `null` or a valid value for the provided enum class, returning the corresponding enum case. Supports
-     *   string- and int-backed enums. Also supports enums from the package `vcn/enum`.
+     * Assert this value backs a given enum or is null, then return that enum case or null respectively.
      *
-     *   For string- and int-backed enums, the JSON value should equal the type and value of a value backing an enum case, or be null.
+     * Supports both native backed enums and those defined using the `vcn/enum` package.
      *
-     *   For enums from package `vcn/enum`, the value should be a string, and should equal the name of the enum case, or be null.
+     * Does **not** support native pure enums.
+     *
+     * If given a native backed enum, case construction uses `BackedEnum::from`, **requiring this value to be strict
+     * equal to the declared backing value**.
+     *
+     * If given an enum defined in the `vcn/enum` package, case (instance) construction uses `Vcn\Lib\Enum::byName`.
      *
      * @template T of BackedEnum|Enum
      *
@@ -327,9 +331,11 @@ class OptionalValue implements JsonSerializable
      *
      * @phpstan-return T|null
      *
-     * @throws Exception\AssertionFailed If the provided value could not be interpreted as a case of the provided
-     *                                      enum class and is inequal to null.
-     * @throws Exception\Runtime         If $className does not exist, or is not a valid enum.
+     * @throws Exception\AssertionFailed If this value does not back $className, or is null.
+     * @throws Exception\Runtime         If $className does not exist, does not extend BackedEnum, or does not extend
+     *                                   Vcn\Lib\Enum.
+     *
+     * @see https://www.php.net/manual/en/language.enumerations.backed.php
      */
     public function ¿enum(string $className): null | BackedEnum | Enum
     {

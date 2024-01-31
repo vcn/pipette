@@ -674,7 +674,21 @@ class Value implements JsonSerializable
             }
 
             try {
-                return $className::from($value);
+                $enum = $className::from($value);
+
+                // pipette always requires a strict type adherence for enums
+                if ($enum->value !== $value) {
+                    throw new Exception\AssertionFailed(
+                        sprintf(
+                            "Expected %s to be a(n) %s, %s given.",
+                            $this->pointer,
+                            gettype($enum->value),
+                            Json::prettyPrintType($this->value)
+                        )
+                    );
+                }
+
+                return $enum;
             } catch (ValueError) {
                 $failedAssertions = array_map(
                     function (BackedEnum $enum) use ($value) {

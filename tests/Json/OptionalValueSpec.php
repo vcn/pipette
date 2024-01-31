@@ -421,11 +421,25 @@ class OptionalValueSpec extends ObjectBehavior
      */
     public function it_should_provide_a_native_enum_if_accessing_a_non_null_optional_native_int_backed_enum(): void
     {
-        $json = "1";
+        $json = 1;
 
         $this->beConstructedWith(new Value($json, '$'), '$');
 
         $this->¿enum(NonEmptyIntBackedEnum::class)->shouldBe(NonEmptyIntBackedEnum::ELT_TWO);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_if_accessing_a_non_null_optional_native_int_backed_enum(): void
+    {
+        $json = '1';
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $e = new Exception\AssertionFailed('Expected $ to be a(n) integer, string given.');
+
+        $this->shouldThrow($e)->during('¿enum', [NonEmptyIntBackedEnum::class]);
     }
 
     /**

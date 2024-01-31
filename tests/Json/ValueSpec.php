@@ -680,11 +680,25 @@ class ValueSpec extends ObjectBehavior
      */
     public function it_should_provide_a_native_int_backed_enum_if_accessing_a_native_int_backed_enum(): void
     {
-        $json = "2";
+        $json = 2;
 
         $this->beConstructedWith($json, '$');
 
         $this->enum(NonEmptyIntBackedEnum::class)->shouldBe(NonEmptyIntBackedEnum::ELT_THREE);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_if_accessing_a_native_int_backed_enum_from_a_string_value(): void
+    {
+        $json = '2';
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed('Expected $ to be a(n) integer, string given.');
+
+        $this->shouldThrow($e)->during('enum', [NonEmptyIntBackedEnum::class]);
     }
 
     /**
@@ -840,11 +854,25 @@ class ValueSpec extends ObjectBehavior
      */
     public function it_should_provide_a_native_int_backed_enum_if_accessing_a_non_null_optional_native_int_backed_enum(): void
     {
-        $json = "0";
+        $json = 0;
 
         $this->beConstructedWith($json, '$');
 
         $this->¿enum(NonEmptyIntBackedEnum::class)->shouldBe(NonEmptyIntBackedEnum::ELT_ONE);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_if_accessing_a_non_null_optional_native_int_backed_enum_from_a_string_value(): void
+    {
+        $json = '0';
+
+        $this->beConstructedWith($json, '$');
+
+        $e = new Exception\AssertionFailed('Expected $ to be a(n) integer, string given.');
+
+        $this->shouldThrow($e)->during('¿enum', [NonEmptyIntBackedEnum::class]);
     }
 
     /**

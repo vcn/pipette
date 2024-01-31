@@ -699,6 +699,7 @@ class Value implements JsonSerializable
 
         // BackedEnum has been handled. Additional valid cases must be a vcn\lib\enum, because regular UnitEnum is not supported
         if (!class_exists(Enum::class)) {
+            // @codeCoverageIgnoreStart
             throw new Exception\Runtime(
                 sprintf(
                     "Class %s is not a native backed enum and Class %s does not exist. Did you include the library?",
@@ -706,6 +707,7 @@ class Value implements JsonSerializable
                     Enum::class
                 )
             );
+            // @codeCoverageIgnoreEnd
         }
 
         if (!is_subclass_of($className, Enum::class)) {

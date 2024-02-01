@@ -2,6 +2,7 @@
 
 namespace Vcn\Pipette\Json;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -313,19 +314,30 @@ class OptionalValue implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
-     * instance, or return null.
+     * Assert this value backs a given enum or is null, then return that enum case or null respectively.
      *
-     * @template T of Enum
+     * Supports both native backed enums and those defined using the `vcn/enum` package.
+     *
+     * Does **not** support native pure enums.
+     *
+     * If given a native backed enum, case construction uses `BackedEnum::from`, **requiring this value to be strict
+     * equal to the declared backing value**.
+     *
+     * If given an enum defined in the `vcn/enum` package, case (instance) construction uses `Vcn\Lib\Enum::byName`.
+     *
+     * @template T of BackedEnum|Enum
      *
      * @phpstan-param class-string<T> $className
      *
      * @phpstan-return T|null
-     * @throws Exception\AssertionFailed If this value is not a string, nor null, or it is not any of the Enum names
-     *                                   from $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
+     *
+     * @throws Exception\AssertionFailed If this value does not back $className, or is null.
+     * @throws Exception\Runtime         If $className does not exist, does not extend BackedEnum, or does not extend
+     *                                   Vcn\Lib\Enum.
+     *
+     * @see https://www.php.net/manual/en/language.enumerations.backed.php
      */
-    public function ¿enum(string $className): ?Enum
+    public function ¿enum(string $className): null | BackedEnum | Enum
     {
         if ($this->isNull()) {
             return null;

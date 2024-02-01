@@ -2,14 +2,15 @@
 
 namespace Vcn\Pipette\Json;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use JsonSerializable;
 use stdClass;
+use ValueError;
 use Vcn\Lib\Enum;
 use Vcn\Pipette\Json;
-use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\Validators\Validator;
 
 class Value implements JsonSerializable
@@ -635,37 +636,102 @@ class Value implements JsonSerializable
     }
 
     /**
-     * Assert this value is a string, assert it is any of the names of the given Enum, then return that Enum instance.
+     * Assert this value backs a given enum, then return that enum case.
      *
-     * @template T of Enum
+     * Supports both native backed enums and those defined using the `vcn/enum` package.
+     *
+     * Does **not** support native pure enums.
+     *
+     * If given a native backed enum, case construction uses `BackedEnum::from`, **requiring this value to be strict
+     * equal to the declared backing value**.
+     *
+     * If given an enum defined in the `vcn/enum` package, case (instance) construction uses `Vcn\Lib\Enum::byName`.
+     *
+     * @template T of BackedEnum|Enum
      *
      * @phpstan-param class-string<T> $className
      *
      * @phpstan-return T
      *
-     * @throws Exception\AssertionFailed If this value is not a string, or it is not any of the Enum names from
-     *                                   $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
+     * @throws Exception\AssertionFailed If this value does not back $className.
+     * @throws Exception\Runtime         If $className does not exist, does not extend BackedEnum, or does not extend
+     *                                   Vcn\Lib\Enum.
+     *
+     * @see https://www.php.net/manual/en/language.enumerations.backed.php
      */
-    public function enum(string $className): Enum
+    public function enum(string $className): Enum | BackedEnum
     {
+        if (!class_exists($className)) {
+            throw new Exception\Runtime(sprintf("Class %s does not exist.", $className));
+        }
+
+        // support native enums
+        if (is_subclass_of($className, BackedEnum::class)) {
+            $value = $this->value;
+
+            if ($className::cases() === []) {
+                throw new Exception\AssertionFailed(
+                    sprintf(
+                        "Expected field %s to be enumeration constant '%s', but the enumeration itself is empty.",
+                        $this->pointer,
+                        $value
+                    )
+                );
+            }
+
+            try {
+                $enum = $className::from($value);
+
+                // pipette always requires a strict type adherence for enums
+                if ($enum->value !== $value) {
+                    throw new Exception\AssertionFailed(
+                        sprintf(
+                            "Expected %s to be a(n) %s, %s given.",
+                            $this->pointer,
+                            gettype($enum->value),
+                            Json::prettyPrintType($this->value)
+                        )
+                    );
+                }
+
+                return $enum;
+            } catch (ValueError) {
+                $failedAssertions = array_map(
+                    function (BackedEnum $enum) use ($value) {
+                        return new Exception\AssertionFailed(
+                            sprintf(
+                                "Expected %s to be enumeration constant '%s', '%s' given.",
+                                $this->getPointer(),
+                                $enum->value,
+                                $value
+                            )
+                        );
+                    },
+                    $className::cases()
+                );
+
+                throw Json\Exception\ManyAssertionsFailed::fromFailedAssertions(
+                    $failedAssertions[0],
+                    ...array_slice($failedAssertions, 1)
+                );
+            }
+        }
+
+        // BackedEnum has been handled. Additional valid cases must be a vcn\lib\enum, because regular UnitEnum is not supported
         if (!class_exists(Enum::class)) {
             // @codeCoverageIgnoreStart
             throw new Exception\Runtime(
                 sprintf(
-                    "Class %s does not exist. Did you include the library?",
+                    "Class %s is not a native backed enum and Class %s does not exist. Did you include the library?",
+                    $className,
                     Enum::class
                 )
             );
             // @codeCoverageIgnoreEnd
         }
 
-        if (!class_exists($className)) {
-            throw new Exception\Runtime(sprintf("Class %s does not exist.", $className));
-        }
-
         if (!is_subclass_of($className, Enum::class)) {
-            throw new Exception\Runtime(sprintf("Class %s does not extend %s.", $className, Enum::class));
+            throw new Exception\Runtime(sprintf("Class %s is not a native backed enum and does not extend %s.", $className, Enum::class));
         }
 
         $string = $this->string();
@@ -674,7 +740,7 @@ class Value implements JsonSerializable
         if ($className::getAllInstances() === []) {
             throw new Exception\AssertionFailed(
                 sprintf(
-                    "Expected field %s to by any of no enumeration constants, '%s' given.",
+                    "Expected field %s to be enumeration constant '%s', but the enumeration itself is empty.",
                     $this->pointer,
                     $string
                 )
@@ -699,27 +765,37 @@ class Value implements JsonSerializable
             );
 
             throw Json\Exception\ManyAssertionsFailed::fromFailedAssertions(
-                reset($failedAssertions),
+                $failedAssertions[0],
                 ...array_slice($failedAssertions, 1)
             );
         }
     }
 
     /**
-     * Assert this value is a string or null, assert it is any of the names of the given Enum, then return that Enum
-     * instance, or return null.
+     * Assert this value backs a given enum or is null, then return that enum case or null respectively.
      *
-     * @template T of Enum
+     * Supports both native backed enums and those defined using the `vcn/enum` package.
+     *
+     * Does **not** support native pure enums.
+     *
+     * If given a native backed enum, case construction uses `BackedEnum::from`, **requiring this value to be strict
+     * equal to the declared backing value**.
+     *
+     * If given an enum defined in the `vcn/enum` package, case (instance) construction uses `Vcn\Lib\Enum::byName`.
+     *
+     * @template T of BackedEnum|Enum
      *
      * @phpstan-param class-string<T> $className
      *
      * @phpstan-return T|null
      *
-     * @throws Exception\AssertionFailed If this value is not a string, nor null, or it is not any of the Enum names
-     *                                   from $className.
-     * @throws Exception\Runtime         If $className does not exist, or does not extend Enum.
+     * @throws Exception\AssertionFailed If this value does not back $className, or is null.
+     * @throws Exception\Runtime         If $className does not exist, does not extend BackedEnum, or does not extend
+     *                                   Vcn\Lib\Enum.
+     *
+     * @see https://www.php.net/manual/en/language.enumerations.backed.php
      */
-    public function ¿enum(string $className): ?Enum
+    public function ¿enum(string $className): null | BackedEnum | Enum
     {
         if ($this->isNull()) {
             return $this->value;

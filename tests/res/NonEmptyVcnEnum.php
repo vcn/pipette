@@ -5,11 +5,11 @@ namespace tests\res\Vcn\Pipette;
 use Vcn\Lib\Enum;
 
 /**
- * @method static NonEmptyEnum A()
- * @method static NonEmptyEnum B()
- * @method static NonEmptyEnum C()
+ * @method static NonEmptyVcnEnum A()
+ * @method static NonEmptyVcnEnum B()
+ * @method static NonEmptyVcnEnum C()
  */
-class NonEmptyEnum extends Enum
+class NonEmptyVcnEnum extends Enum
 {
     protected const A = 0;
     protected const B = 0;

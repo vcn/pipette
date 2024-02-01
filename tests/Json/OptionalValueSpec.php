@@ -4,7 +4,9 @@ namespace tests\Vcn\Pipette\Json;
 
 use DateTimeImmutable;
 use PhpSpec\ObjectBehavior;
-use tests\res\Vcn\Pipette\NonEmptyEnum;
+use tests\res\Vcn\Pipette\NonEmptyIntBackedEnum;
+use tests\res\Vcn\Pipette\NonEmptyStringBackedEnum;
+use tests\res\Vcn\Pipette\NonEmptyVcnEnum;
 use Vcn\Pipette\Json\Exception;
 use Vcn\Pipette\Json\OptionalValue;
 use Vcn\Pipette\Json\Value;
@@ -365,26 +367,92 @@ class OptionalValueSpec extends ObjectBehavior
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_an_enum_if_accessing_a_non_null_optional_enum()
+    public function it_should_provide_a_vcn_enum_if_accessing_a_non_null_optional_vcn_enum(): void
     {
         $json = "A";
 
         $this->beConstructedWith(new Value($json, '$'), '$');
 
-        $this->¿enum(NonEmptyEnum::class)->shouldBe(NonEmptyEnum::A());
+        $this->¿enum(NonEmptyVcnEnum::class)->shouldBe(NonEmptyVcnEnum::A());
     }
 
     /**
      * @test
      * @throws Exception\AssertionFailed
      */
-    public function it_should_provide_null_if_accessing_a_null_optional_enum()
+    public function it_should_provide_null_if_accessing_a_null_optional_vcn_enum(): void
     {
         $json = null;
 
         $this->beConstructedWith(new Value($json, '$'), '$');
 
-        $this->¿enum(NonEmptyEnum::class)->shouldBe(null);
+        $this->¿enum(NonEmptyVcnEnum::class)->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_native_enum_if_accessing_a_non_null_optional_native_string_backed_enum(): void
+    {
+        $json = "A";
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿enum(NonEmptyStringBackedEnum::class)->shouldBe(NonEmptyStringBackedEnum::A);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_native_string_backed_enum(): void
+    {
+        $json = null;
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿enum(NonEmptyStringBackedEnum::class)->shouldBe(null);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_a_native_enum_if_accessing_a_non_null_optional_native_int_backed_enum(): void
+    {
+        $json = 1;
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿enum(NonEmptyIntBackedEnum::class)->shouldBe(NonEmptyIntBackedEnum::ELT_TWO);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_fail_if_accessing_a_non_null_optional_native_int_backed_enum(): void
+    {
+        $json = '1';
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $e = new Exception\AssertionFailed('Expected $ to be a(n) integer, string given.');
+
+        $this->shouldThrow($e)->during('¿enum', [NonEmptyIntBackedEnum::class]);
+    }
+
+    /**
+     * @test
+     * @throws Exception\AssertionFailed
+     */
+    public function it_should_provide_null_if_accessing_a_null_optional_native_int_backed_enum(): void
+    {
+        $json = null;
+
+        $this->beConstructedWith(new Value($json, '$'), '$');
+
+        $this->¿enum(NonEmptyIntBackedEnum::class)->shouldBe(null);
     }
 
     /**
